@@ -4,3 +4,5 @@ Sitalica_312_v2.2.gene.gff3
 Sitalica_312_v2.fa
 gly_python
 CNN_GCN/GLYpython
+./.vscode/
+./__pycache__/
