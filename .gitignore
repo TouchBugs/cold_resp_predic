@@ -6,3 +6,18 @@ gly_python
 CNN_GCN/GLYpython
 ./.vscode/
 ./__pycache__/
+
+# 其他常见忽略规则
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+ENV/
+venv.bak/
+.idea/
+.vscode/
+__pycache__/
+.DS_Store
+*.swp
