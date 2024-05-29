@@ -5,7 +5,7 @@ import torch
 然后,使用DataLoader来创建一个数据加载器,用于加载数据集,并将其划分为批次,把每个批次的序列和标签保存下来。
 最后,使用pickle模块来保存每个批次的数据。修改第51行和68行
 """
-csv_path = r'/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/分好的数据集csv/new/'
+csv_path = r'/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/分好的数据集csv/'
 
 # 定义Dataset类
 class MyDataset(torch.utils.data.Dataset):
@@ -51,8 +51,8 @@ class MyDataset(torch.utils.data.Dataset):
         
 from torch.utils.data import DataLoader
 # 读取zero_rows_val.csv 调代码的假的数据集.csv
-data_t = MyDataset(csv_path + 'train_data.csv')
-data_v = MyDataset(csv_path + 'val_data.csv')
+data_t = MyDataset(csv_path + 'train.csv')
+data_v = MyDataset(csv_path + 'valid.csv')
 # data = MyDataset(csv_path + '调代码的假的数据集.csv')
 
 # print(data[0])
@@ -78,10 +78,10 @@ for i in  enumerate(dataloader_v):
 import pickle
 # 把每个批次的数据单独保存
 for i, batch in enumerate(dataloader_t):
-    with open(f'/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/分好的数据集csv/new/二进制一位分批数据集/train/train_batch_{i}.pkl', 'wb') as f:
+    with open(f'/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/分好的数据集csv/二进制/train/train_batch_{i}.pkl', 'wb') as f:
         pickle.dump(batch, f)
 for i, batch in enumerate(dataloader_v):
-    with open(f'/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/分好的数据集csv/new/二进制一位分批数据集/val/val_batch_{i}.pkl', 'wb') as f:
+    with open(f'/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/分好的数据集csv/二进制/val/val_batch_{i}.pkl', 'wb') as f:
         pickle.dump(batch, f)
 # # 读取每个批次的数据
 # for i in range(len(dataloader)):
