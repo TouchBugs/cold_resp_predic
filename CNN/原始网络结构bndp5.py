@@ -5,14 +5,22 @@ from torch.nn import Linear
 import torch.nn.functional as F
 
 class bcolors:
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
+    PURPLR = '\033[95m'
+    BLUE = '\033[94m'
+    GREEN = '\033[92m'
+    YELLOW = '\033[93m'
+    RED = '\033[91m'
+    WHITE = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
+    UNDERLINE_Blue = '\033[4;34m'
+    UNDERLINE_Yellow = '\033[4;33m'
+    UNDERLINE_Purple = '\033[4;35m'
+    
+
+# print('\033[4;34m' + '下划线蓝色文本' + '\033[0m')
+# print('\033[4;33m' + '下划线黄色文本' + '\033[0m')
+# print('\033[4;35m' + '下划线紫色文本' + '\033[0m')
 
 
 class CNN_structure(nn.Module):
@@ -114,6 +122,8 @@ class GCN_MLP(nn.Module):
         self.dropout = nn.Dropout(p=0.5)
         self.bn1 = nn.BatchNorm1d(1024)
         self.bn2 = nn.BatchNorm1d(512)
+        # sigmoid激活函数
+        self.sigmoid = nn.Sigmoid()
 
     def forward(self, data_for_cnn):
         # print(data_for_cnn.shape) # torch.Size([32, 46398])
@@ -126,5 +136,5 @@ class GCN_MLP(nn.Module):
         x = self.dropout(self.fc2(x))
         x = self.SeLU(x)
         x = self.fc3(x)
-        
+        x = self.sigmoid(x)
         return x
