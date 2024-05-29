@@ -87,7 +87,7 @@ train_data_dir = '/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/分好的�
 val_data_dir = '/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/分好的数据集csv/二进制/val/'
 
 print('创建模型实例')
-model = GCN_MLP(46398, 512*2).to(device)
+model = GCN_MLP(512*2).to(device)
 print('模型实例创建完成')
 
 criterion = torch.nn.BCEWithLogitsLoss()

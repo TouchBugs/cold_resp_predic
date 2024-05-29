@@ -102,11 +102,9 @@ class make_feature(nn.Module):
         return output # torch.Size([32, 512, 1])
 
 class GCN_MLP(nn.Module):
-    def __init__(self, input_dim, hidden_dim):
+    def __init__(self, hidden_dim):
         super(GCN_MLP, self).__init__()
-        self.conv1 = GCNConv(input_dim, hidden_dim)
-        self.conv2 = GCNConv(hidden_dim, hidden_dim // 2)
-        # self.fc1 = Linear(hidden_dim, hidden_dim // 2)
+        
         self.fc2 = Linear(hidden_dim // 2, hidden_dim // 4)
         self.fc3 = Linear(hidden_dim // 4, 1)
         self.makeFeature = make_feature()
@@ -121,21 +119,12 @@ class GCN_MLP(nn.Module):
         # print(data_for_cnn.shape) # torch.Size([32, 46398])
         data_for_cnn = data_for_cnn.unsqueeze(1) # ([32, 1, 46398])
         CNN_out = self.makeFeature(data_for_cnn).squeeze(2) # ([32, 512])
-        # x, edge_index = data.x, data.edge_index
-        # x = self.conv1(x, edge_index)
-        # x = self.bn1(x)
-        # x = torch.relu(x)
-        # x = self.tanh(self.bn2(self.conv2(x, edge_index))) # 值在-1-1之间
-        # # print('图卷积之后的形状', x.shape) # torch.Size([32, 512])
-        # # 把两个特征拼接在一起
-        # x = torch.cat((x, CNN_out), dim=1) # torch.Size([32, 1024])
-        # print(x.shape)
+        
         x = CNN_out
         x = self.SeLU(x)
-        # x = self.dropout(self.fc1(x))
-        # x = self.SeLU(x)
+        
         x = self.dropout(self.fc2(x))
         x = self.SeLU(x)
         x = self.fc3(x)
-        # x = self.tanh(x)
+        
         return x

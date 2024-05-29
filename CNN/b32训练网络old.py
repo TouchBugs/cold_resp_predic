@@ -1,4 +1,3 @@
-# from parser import sequence2st
 import pickle
 from 原始网络结构bndp5 import GCN_MLP, bcolors
 import torch
@@ -17,7 +16,7 @@ Thetarget = 'bn,dp0.5无GCN突变0.3'
 # 参数定义
 torch.cuda.set_device(0)
 device = torch.device("cuda:0")
-cpu = torch.device("cpu")
+
 # 学习率和L2正则化参数
 lr=0.001
 weight_decay=1e-4
@@ -27,25 +26,19 @@ epochs = 1000
 best_acc = 0.8
 databasename = '二进制一位分批数据集'
 # 保存图片的名字
-root_dir = '/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/CNN_GCN/5.22调参专用/'
-loss_png = root_dir + f'loss64-lr{lr}-wd{weight_decay}-ep{epochs}-{TheTime}-{Thetarget}.png'
-acc_png = root_dir + f'acc64-lr{lr}-wd{weight_decay}-ep{epochs}-{TheTime}-{Thetarget}.png'
+root_dir = '/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/CNN/'
+loss_png = root_dir + f'loss-lr{lr}-wd{weight_decay}-ep{epochs}-{TheTime}-{Thetarget}.png'
+acc_png = root_dir + f'acc-lr{lr}-wd{weight_decay}-ep{epochs}-{TheTime}-{Thetarget}.png'
 # 给一个二进制数据集路径
-
-train_data_dir = f'/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/分好的数据集csv/new/二进制一位分批数据集/train/'
-val_data_dir = f'/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/分好的数据集csv/new/二进制一位分批数据集/val/'
-train_graph_dir = f'/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/分好的数据集csv/new/二进制一位分批数据集/Data/32/train/'
-val_graph_dir = f'/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/分好的数据集csv/new/二进制一位分批数据集/Data/32/val/'
-
-# sequence-shape torch.Size([32, 46398, 5])
-# label-shape torch.Size([32])
+data_root = '/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/分好的数据集csv/二进制'
+train_data_dir = data_root + '/train/'
+val_data_dir = data_root + '/val/'
 
 # 创建模型实例
 print('创建模型实例')
-# model = GRU.Classifier_1(input_size=46398)
-model = GCN_MLP(46398,512*2).to(device)
+model = GCN_MLP(512*2).to(device)
 print('模型实例创建完成')
-# export CUDA_VISIBLE_DEVICES='2'
+
 # 定义损失函数和优化器
 criterion = torch.nn.BCEWithLogitsLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
@@ -55,36 +48,7 @@ train_losses = []
 train_accs = []
 val_losses = []
 val_accs = []
-# device = torch.device("cpu")
 
-def mutate_tensor(input_tensor: torch.Tensor, mutation_rate=0.1) -> torch.Tensor:
-    # 获取张量的形状
-    num_samples, num_features = input_tensor.shape
-    
-    # 计算需要置零的位置数量
-    num_mutations = int(num_features * mutation_rate)
-    
-    # 生成随机位置
-    mutation_indices = torch.rand(num_samples, num_features) < mutation_rate
-    
-    # 创建一个掩码
-    mask = ~mutation_indices
-    
-    # 使用掩码将选定位置的值变为0
-    mutated_tensor = input_tensor * mask
-    
-    return mutated_tensor
-
-def get_graph_data(index, train_val):
-    if train_val == 'train_batch':
-        with open(train_graph_dir+train_val+'_'+str(index)+'.pkl', 'rb') as f:
-            data = pickle.load(f)
-    elif train_val == 'val_batch':
-        with open(val_graph_dir+train_val+'_'+str(index)+'.pkl', 'rb') as f:
-            data = pickle.load(f)
-    else: # raise报错
-        raise Exception(f'get_graph_data函数参数错误{index}和{train_val}')
-    return data
 # --------------------------------------------------------------------------------------
 # 训练模型
 print(f'训练模型, 训练目的：{Thetarget}')
@@ -126,7 +90,6 @@ for epoch in range(epochs):
             # 使用相同的索引对两个张量进行重新排列
             permuted_sequence = sequence[permuted_index]
             permuted_label = label[permuted_index]
-            permuted_sequence = mutate_tensor(permuted_sequence, mutation_rate=0.3)
             # --------------------------------------------------------------------------------------
            
             # --------------------------------------------------------------------------------------
