@@ -20,14 +20,14 @@ class bcolors:
 class CNN_structure(nn.Module):
     def __init__(self):
         super(CNN_structure, self).__init__()
-        self.conv1 = nn.Conv1d(in_channels=32, out_channels=64, kernel_size=24, stride=12, padding=0)
-        self.conv2 = nn.Conv1d(in_channels=32, out_channels=64, kernel_size=20, stride=10, padding=0)
-        self.conv3 = nn.Conv1d(in_channels=32, out_channels=64, kernel_size=16, stride=8, padding=0)
-        self.conv4 = nn.Conv1d(in_channels=32, out_channels=64, kernel_size=10, stride=5, padding=0)
-        self.conv5 = nn.Conv1d(in_channels=32, out_channels=64, kernel_size=8, stride=4, padding=0)
-        self.conv6 = nn.Conv1d(in_channels=32, out_channels=64, kernel_size=6, stride=3, padding=0)
-        self.conv7 = nn.Conv1d(in_channels=32, out_channels=64, kernel_size=4, stride=2, padding=0)
-        self.conv8 = nn.Conv1d(in_channels=32, out_channels=64, kernel_size=2, stride=1, padding=0)
+        self.conv1 = nn.Conv1d(in_channels=16, out_channels=64, kernel_size=24, stride=12, padding=0)
+        self.conv2 = nn.Conv1d(in_channels=16, out_channels=64, kernel_size=20, stride=10, padding=0)
+        self.conv3 = nn.Conv1d(in_channels=16, out_channels=64, kernel_size=16, stride=8, padding=0)
+        self.conv4 = nn.Conv1d(in_channels=16, out_channels=64, kernel_size=10, stride=5, padding=0)
+        self.conv5 = nn.Conv1d(in_channels=16, out_channels=64, kernel_size=8, stride=4, padding=0)
+        self.conv6 = nn.Conv1d(in_channels=16, out_channels=64, kernel_size=6, stride=3, padding=0)
+        self.conv7 = nn.Conv1d(in_channels=16, out_channels=64, kernel_size=4, stride=2, padding=0)
+        self.conv8 = nn.Conv1d(in_channels=16, out_channels=64, kernel_size=2, stride=1, padding=0)
         self.dropout = nn.Dropout(p=0.2)
         self.bn1 = nn.BatchNorm1d(64)
         self.bn2 = nn.BatchNorm1d(64)
@@ -39,17 +39,17 @@ class CNN_structure(nn.Module):
         self.bn8 = nn.BatchNorm1d(64)
 
     def forward(self, x:torch.Tensor)->tuple:
-        x1 = self.dropout(self.bn1(self.conv1(x)))
+        # x1 = self.dropout(self.bn1(self.conv1(x)))
         # x2 = self.dropout(self.bn2(self.conv2(x)))
         # x3 = self.dropout(self.bn3(self.conv3(x)))
         x4 = self.dropout(self.bn4(self.conv4(x)))
         # x5 = self.dropout(self.bn5(self.conv5(x)))
         # x6 = self.dropout(self.bn6(self.conv6(x)))
-        x7 = self.dropout(self.bn7(self.conv7(x)))
+        # x7 = self.dropout(self.bn7(self.conv7(x)))
         x8 = self.dropout(self.bn8(self.conv8(x)))    
         # print('x1.shape', x1.shape, 'x2.shape', x2.shape, 'x3.shape', x3.shape, 'x4.shape', x4.shape, 'x5.shape', x5.shape, 'x6.shape', x6.shape, 'x7.shape', x7.shape, 'x8.shape', x8.shape)
         # return x1, x2, x3, x4, x5, x6, x7, x8
-        return x1, x4, x7, x8
+        return x4, x8
 
 class make_feature(nn.Module):
     def __init__(self):
@@ -78,11 +78,11 @@ class make_feature(nn.Module):
         # print('x0.1.shape', x.shape)
         x = self.Relu(self.bn2(self.conv1(x)))
         # print('x0.2.shape', x.shape)
-        x = F.max_pool1d(x, kernel_size=2, stride=2)
+        # x = F.max_pool1d(x, kernel_size=2, stride=2)
         # print('x1.shape', x.shape)
-        x = self.Relu(self.bn3(self.conv2(x)))
+        # x = self.Relu(self.bn3(self.conv2(x)))
         # print(x.shape)
-        x = F.max_pool1d(x, kernel_size=2, stride=2)
+        # x = F.max_pool1d(x, kernel_size=2, stride=2)
         # print(x.shape)
         # print('x2.shape', x.shape)
         out = []

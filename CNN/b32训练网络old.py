@@ -18,7 +18,7 @@ device = torch.device("cuda:0")
 
 lr = 0.001
 weight_decay = 1e-4
-epochs = 30
+epochs = 50
 
 best_acc = 0.8
 root_dir = '/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/CNN/'
@@ -32,7 +32,7 @@ train_data_dir = data_root + '/train/'
 val_data_dir = data_root + '/val/'
 
 print('创建模型实例')
-model = GCN_MLP(512).to(device)
+model = GCN_MLP(128*2).to(device)
 print('模型实例创建完成')
 
 criterion = torch.nn.BCELoss()
