@@ -32,7 +32,7 @@ train_data_dir = data_root + '/train/'
 val_data_dir = data_root + '/val/'
 
 print('创建模型实例')
-model = GCN_MLP(512*2).to(device)
+model = GCN_MLP(512).to(device)
 print('模型实例创建完成')
 
 criterion = torch.nn.BCELoss()

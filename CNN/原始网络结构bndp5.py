@@ -16,12 +16,6 @@ class bcolors:
     UNDERLINE_Blue = '\033[4;34m'
     UNDERLINE_Yellow = '\033[4;33m'
     UNDERLINE_Purple = '\033[4;35m'
-    
-
-# print('\033[4;34m' + '下划线蓝色文本' + '\033[0m')
-# print('\033[4;33m' + '下划线黄色文本' + '\033[0m')
-# print('\033[4;35m' + '下划线紫色文本' + '\033[0m')
-
 
 class CNN_structure(nn.Module):
     def __init__(self):
@@ -46,15 +40,16 @@ class CNN_structure(nn.Module):
 
     def forward(self, x:torch.Tensor)->tuple:
         x1 = self.dropout(self.bn1(self.conv1(x)))
-        x2 = self.dropout(self.bn2(self.conv2(x)))
-        x3 = self.dropout(self.bn3(self.conv3(x)))
+        # x2 = self.dropout(self.bn2(self.conv2(x)))
+        # x3 = self.dropout(self.bn3(self.conv3(x)))
         x4 = self.dropout(self.bn4(self.conv4(x)))
-        x5 = self.dropout(self.bn5(self.conv5(x)))
-        x6 = self.dropout(self.bn6(self.conv6(x)))
+        # x5 = self.dropout(self.bn5(self.conv5(x)))
+        # x6 = self.dropout(self.bn6(self.conv6(x)))
         x7 = self.dropout(self.bn7(self.conv7(x)))
         x8 = self.dropout(self.bn8(self.conv8(x)))    
         # print('x1.shape', x1.shape, 'x2.shape', x2.shape, 'x3.shape', x3.shape, 'x4.shape', x4.shape, 'x5.shape', x5.shape, 'x6.shape', x6.shape, 'x7.shape', x7.shape, 'x8.shape', x8.shape)
-        return x1, x2, x3, x4, x5, x6, x7, x8
+        # return x1, x2, x3, x4, x5, x6, x7, x8
+        return x1, x4, x7, x8
 
 class make_feature(nn.Module):
     def __init__(self):
@@ -63,12 +58,9 @@ class make_feature(nn.Module):
         self.conv0 = nn.Conv1d(in_channels=1, out_channels=8, kernel_size=20, stride=1, padding=0)
         self.conv1 = nn.Conv1d(in_channels=8, out_channels=16, kernel_size=5, stride=2, padding=0)
         self.conv2 = nn.Conv1d(in_channels=16, out_channels=32, kernel_size=5, stride=2, padding=0)
-        self.relu = nn.ReLU()
+        self.Relu = nn.ReLU()
         self.SeLU = nn.SELU()
-        # ELU激活函数
-        self.ELU = nn.ELU(inplace=True)
-        # Swish激活函数
-        self.Swish = nn.Hardswish(inplace=True)
+        
         # torch.dropout
         self.dropout = nn.Dropout(p=0.2)
         # tanh激活函数
@@ -78,17 +70,17 @@ class make_feature(nn.Module):
         self.bn3 = nn.BatchNorm1d(32)
 
     def forward(self, x):
-        x = self.SeLU(self.bn1(self.conv0(x)))
+        x = self.Relu(self.bn1(self.conv0(x)))
         # print('x0.shape', x.shape)
         # 最大池化
         x = F.max_pool1d(x, kernel_size=4, stride=5)
         # print('池化', x)
         # print('x0.1.shape', x.shape)
-        x = self.SeLU(self.bn2(self.conv1(x)))
+        x = self.Relu(self.bn2(self.conv1(x)))
         # print('x0.2.shape', x.shape)
         x = F.max_pool1d(x, kernel_size=2, stride=2)
         # print('x1.shape', x.shape)
-        x = self.Swish(self.bn3(self.conv2(x)))
+        x = self.Relu(self.bn3(self.conv2(x)))
         # print(x.shape)
         x = F.max_pool1d(x, kernel_size=2, stride=2)
         # print(x.shape)
