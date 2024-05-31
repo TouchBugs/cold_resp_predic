@@ -37,7 +37,6 @@ print('模型实例创建完成')
 
 criterion = torch.nn.BCELoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
-# scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.9)
 train_losses = []
 train_accs = []
 val_losses = []
@@ -112,7 +111,14 @@ def record_results(epoch, epoch_loss, right_num, num1s, num0s, outputs, metrics,
         print('标签里0的个数: ', num0s)
         print('总数: ', num1s + num0s)
         print('正确的个数: ', right_num)
-        # print('最后一个批次的输出, 不满batchsize是正常的:\n', outputs)
+
+# 记录最近4个epoch的训练损失
+recent_train_losses = []
+recent_val_losses = []
+recent_val_accs = []
+lr_increase_factor = 1.05
+lr_decrease_factor = 0.7  # 学习率减小的因子
+tolerance = 0.01  # 容忍度
 
 for epoch in range(epochs):
     model.train()
@@ -150,6 +156,8 @@ for epoch in range(epochs):
     train_f1 /= 135
 
     record_results(epoch, epoch_loss, right_num, num1s, num0s, outputs, (train_precision, train_recall, train_f1), train=True)
+    recent_train_losses.append(epoch_loss)
+
 
     model.eval()
     val_loss = 0
@@ -183,6 +191,33 @@ for epoch in range(epochs):
     val_f1 /= 27
 
     record_results(epoch, val_loss, right_num, num1s, num0s, outputs, (val_precision, val_recall, val_f1), train=False)
+    recent_val_losses.append(val_loss)
+    recent_val_accs.append(right_num / (num1s + num0s))
+
+    # 增大和减小学习率的判断
+    if len(recent_train_losses) > 4 and len(recent_val_losses) > 4 and len(recent_val_accs) > 4:
+        recent_train_losses.pop(0)
+        recent_val_losses.pop(0)
+        recent_val_accs.pop(0)
+
+        # 增大学习率的条件
+        if (recent_train_losses[-1] > recent_train_losses[0] * (1 - tolerance)) and \
+           (recent_val_losses[-1] > recent_val_losses[0] * (1 - tolerance)) and \
+           (recent_val_accs[-1] < recent_val_accs[0] * (1 + tolerance)):
+            lr *= lr_increase_factor
+            for param_group in optimizer.param_groups:
+                param_group['lr'] = lr
+            print(f"{bcolors.UNDERLINE}Learning rate {bcolors.RED}increased{bcolors.UNDERLINE} to {lr:.6f}{bcolors.WHITE}")
+
+        # 减小学习率的条件
+        elif (recent_train_losses[-1] < recent_train_losses[0] * (1 - tolerance)) and \
+             (recent_val_losses[-1] < recent_val_losses[0] * (1 - tolerance)) and \
+             (recent_val_accs[-1] > recent_val_accs[0] * (1 + tolerance)):
+            lr *= lr_decrease_factor
+            for param_group in optimizer.param_groups:
+                param_group['lr'] = lr
+            print(f"{bcolors.UNDERLINE}Learning rate {bcolors.GREEN}decreased{bcolors.UNDERLINE} to {lr:.6f}{bcolors.WHITE}")
+
 
     if val_accs[-1] > best_acc:
         best_acc = val_accs[-1]
