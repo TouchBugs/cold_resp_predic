@@ -105,8 +105,8 @@ class GCN_MLP(nn.Module):
     def __init__(self):
         super(GCN_MLP, self).__init__()
         
-        self.fc2 = Linear(128, 64)
-        self.fc3 = Linear(64, 1)
+        self.fc2 = Linear(128, 256)
+        self.fc3 = Linear(256, 1)
         self.makeFeature = make_feature()
         self.SeLU = nn.SELU()
         # tanh激活函数
