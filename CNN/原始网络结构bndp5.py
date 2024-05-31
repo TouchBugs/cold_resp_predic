@@ -102,11 +102,11 @@ class make_feature(nn.Module):
         return output # torch.Size([32, 512, 1])
 
 class GCN_MLP(nn.Module):
-    def __init__(self, hidden_dim):
+    def __init__(self):
         super(GCN_MLP, self).__init__()
         
-        self.fc2 = Linear(hidden_dim // 2, hidden_dim // 4)
-        self.fc3 = Linear(hidden_dim // 4, 1)
+        self.fc2 = Linear(128, 64)
+        self.fc3 = Linear(64, 1)
         self.makeFeature = make_feature()
         self.SeLU = nn.SELU()
         # tanh激活函数
