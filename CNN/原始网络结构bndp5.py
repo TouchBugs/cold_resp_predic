@@ -111,7 +111,7 @@ class GCN_MLP(nn.Module):
         self.SeLU = nn.SELU()
         # tanh激活函数
         self.tanh = nn.Tanh()
-        self.dropout = nn.Dropout(p=0.5)
+        self.dropout = nn.Dropout(p=0.1)
         self.bn1 = nn.BatchNorm1d(1024)
         self.bn2 = nn.BatchNorm1d(512)
         # sigmoid激活函数

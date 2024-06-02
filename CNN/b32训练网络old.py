@@ -1,4 +1,5 @@
 import pickle
+import re
 from 原始网络结构bndp5 import GCN_MLP, bcolors
 import torch
 import time
@@ -11,12 +12,12 @@ print(TheTime)
 # seed = 3407
 # torch.manual_seed(seed)
 # =============================================
-Thetarget = '无GCN'
+Thetarget = 'adam'
 # =============================================
 torch.cuda.set_device(0)
 device = torch.device("cuda:0")
 
-lr = 0.01
+lr = 0.001
 weight_decay = 1e-4
 epochs = 100
 
@@ -36,7 +37,7 @@ model = GCN_MLP().to(device)
 print('模型实例创建完成')
 
 criterion = torch.nn.BCELoss()
-optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
+optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay, eps=1e-10)
 train_losses = []
 train_accs = []
 val_losses = []
@@ -116,8 +117,9 @@ def record_results(epoch, epoch_loss, right_num, num1s, num0s, outputs, metrics,
 recent_train_losses = []
 recent_val_losses = []
 recent_val_accs = []
+recent_train_accs = []
 lr_increase_factor = 1.05
-lr_decrease_factor = 0.7  # 学习率减小的因子
+lr_decrease_factor = 0.8  # 学习率减小的因子
 tolerance = 0.01  # 容忍度
 
 for epoch in range(epochs):
@@ -157,7 +159,7 @@ for epoch in range(epochs):
 
     record_results(epoch, epoch_loss, right_num, num1s, num0s, outputs, (train_precision, train_recall, train_f1), train=True)
     recent_train_losses.append(epoch_loss)
-
+    recent_train_accs.append(right_num / (num1s + num0s))
 
     model.eval()
     val_loss = 0
@@ -201,23 +203,23 @@ for epoch in range(epochs):
         recent_val_accs.pop(0)
 
         # 增大学习率的条件
+        # 如果loss增大，且准确率减小，说明学习率过大，需要减小学习率，减小到原来的0.7倍
+        # 如果loss减小，且准确率增大，就增大学习率，增大到原来的1.05倍，加速收敛 tolerance=0.01
         if (recent_train_losses[-1] > recent_train_losses[0] * (1 - tolerance)) and \
            (recent_val_losses[-1] > recent_val_losses[0] * (1 - tolerance)) and \
-           (recent_val_accs[-1] < recent_val_accs[0] * (1 + tolerance)):
-            lr *= lr_increase_factor
+           (recent_val_accs[-1] < recent_val_accs[0] * (1 + tolerance) and \
+            recent_train_accs[-1] <= 0.85):
+            lr *= lr_increase_factor # lr_increase_factor = 1.05
             for param_group in optimizer.param_groups:
                 param_group['lr'] = lr
             print(f"{bcolors.UNDERLINE}Learning rate {bcolors.RED}increased{bcolors.UNDERLINE} to {lr:.6f}{bcolors.WHITE}")
 
-        # 减小学习率的条件
-        elif (recent_train_losses[-1] < recent_train_losses[0] * (1 - tolerance)) and \
-             (recent_val_losses[-1] < recent_val_losses[0] * (1 - tolerance)) and \
-             (recent_val_accs[-1] > recent_val_accs[0] * (1 + tolerance)):
-            lr *= lr_decrease_factor
+        # 减小学习率的条件: 训练精度达到了0.85以上
+        if(recent_train_accs[-1] > 0.85):
+            lr *= lr_decrease_factor # lr_decrease_factor = 0.8
             for param_group in optimizer.param_groups:
                 param_group['lr'] = lr
             print(f"{bcolors.UNDERLINE}Learning rate {bcolors.GREEN}decreased{bcolors.UNDERLINE} to {lr:.6f}{bcolors.WHITE}")
-
 
     if val_accs[-1] > best_acc:
         best_acc = val_accs[-1]
