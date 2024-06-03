@@ -20,23 +20,23 @@ class bcolors:
 class CNN_structure(nn.Module):
     def __init__(self):
         super(CNN_structure, self).__init__()
-        self.conv1 = nn.Conv1d(in_channels=8, out_channels=64, kernel_size=24, stride=12, padding=0)
-        self.conv2 = nn.Conv1d(in_channels=8, out_channels=64, kernel_size=20, stride=10, padding=0)
-        self.conv3 = nn.Conv1d(in_channels=8, out_channels=64, kernel_size=16, stride=8, padding=0)
-        self.conv4 = nn.Conv1d(in_channels=8, out_channels=64, kernel_size=10, stride=5, padding=0)
-        self.conv5 = nn.Conv1d(in_channels=8, out_channels=64, kernel_size=8, stride=4, padding=0)
-        self.conv6 = nn.Conv1d(in_channels=8, out_channels=64, kernel_size=6, stride=3, padding=0)
-        self.conv7 = nn.Conv1d(in_channels=8, out_channels=64, kernel_size=4, stride=2, padding=0)
-        self.conv8 = nn.Conv1d(in_channels=8, out_channels=64, kernel_size=2, stride=1, padding=0)
+        self.conv1 = nn.Conv1d(in_channels=8*4, out_channels=128, kernel_size=24, stride=12, padding=0)
+        self.conv2 = nn.Conv1d(in_channels=8*4, out_channels=128, kernel_size=20, stride=10, padding=0)
+        self.conv3 = nn.Conv1d(in_channels=8*4, out_channels=128, kernel_size=16, stride=8, padding=0)
+        self.conv4 = nn.Conv1d(in_channels=8*4, out_channels=128, kernel_size=10, stride=5, padding=0)
+        self.conv5 = nn.Conv1d(in_channels=8*4, out_channels=128, kernel_size=8, stride=4, padding=0)
+        self.conv6 = nn.Conv1d(in_channels=8*4, out_channels=128, kernel_size=6, stride=3, padding=0)
+        self.conv7 = nn.Conv1d(in_channels=8*4, out_channels=128, kernel_size=4, stride=2, padding=0)
+        self.conv8 = nn.Conv1d(in_channels=8*4, out_channels=128, kernel_size=2, stride=1, padding=0)
         self.dropout = nn.Dropout(p=0.2)
-        self.bn1 = nn.BatchNorm1d(64)
-        self.bn2 = nn.BatchNorm1d(64)
-        self.bn3 = nn.BatchNorm1d(64)
-        self.bn4 = nn.BatchNorm1d(64)
-        self.bn5 = nn.BatchNorm1d(64)
-        self.bn6 = nn.BatchNorm1d(64)
-        self.bn7 = nn.BatchNorm1d(64)
-        self.bn8 = nn.BatchNorm1d(64)
+        self.bn1 = nn.BatchNorm1d(128)
+        self.bn2 = nn.BatchNorm1d(128)
+        self.bn3 = nn.BatchNorm1d(128)
+        self.bn4 = nn.BatchNorm1d(128)
+        self.bn5 = nn.BatchNorm1d(128)
+        self.bn6 = nn.BatchNorm1d(128)
+        self.bn7 = nn.BatchNorm1d(128)
+        self.bn8 = nn.BatchNorm1d(128)
 
     def forward(self, x:torch.Tensor)->tuple:
         # x1 = self.dropout(self.bn1(self.conv1(x)))
@@ -55,17 +55,15 @@ class make_feature(nn.Module):
     def __init__(self):
         super(make_feature, self).__init__()
         self.cnn = CNN_structure()
-        self.conv0 = nn.Conv1d(in_channels=1, out_channels=8, kernel_size=20, stride=1, padding=0)
+        self.conv0 = nn.Conv1d(in_channels=1, out_channels=32, kernel_size=20, stride=1, padding=0)
         self.conv1 = nn.Conv1d(in_channels=8, out_channels=16, kernel_size=5, stride=2, padding=0)
         self.conv2 = nn.Conv1d(in_channels=16, out_channels=32, kernel_size=5, stride=2, padding=0)
         self.Relu = nn.ReLU()
-        self.SeLU = nn.SELU()
         
         # torch.dropout
         self.dropout = nn.Dropout(p=0.2)
         # tanh激活函数
-        self.tanh = nn.Tanh()
-        self.bn1 = nn.BatchNorm1d(8)
+        self.bn1 = nn.BatchNorm1d(32)
         self.bn2 = nn.BatchNorm1d(16)
         self.bn3 = nn.BatchNorm1d(32)
 
@@ -97,7 +95,7 @@ class make_feature(nn.Module):
             # 将池化后的结果沿着通道维度拼接在一起
             output_tensor = torch.cat(pooled_tensors, dim=1)
             out.append(output_tensor)
-        output = self.tanh(torch.cat(out, dim=1)) # 我希望feature的值都在-1-1之间 tanh
+        output = self.Relu(torch.cat(out, dim=1)) # 我希望feature的值都在-1-1之间 Relu
         # print(output.shape)
         return output # torch.Size([32, 512, 1])
 
@@ -105,12 +103,12 @@ class GCN_MLP(nn.Module):
     def __init__(self):
         super(GCN_MLP, self).__init__()
         
-        self.fc2 = Linear(128, 256)
-        self.fc3 = Linear(256, 1)
+        self.fc2 = Linear(256, 1024)
+        self.fc3 = Linear(1024, 1)
         self.makeFeature = make_feature()
         self.SeLU = nn.SELU()
         # tanh激活函数
-        self.tanh = nn.Tanh()
+
         self.dropout = nn.Dropout(p=0.1)
         self.bn1 = nn.BatchNorm1d(1024)
         self.bn2 = nn.BatchNorm1d(512)

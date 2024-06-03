@@ -12,7 +12,7 @@ print(TheTime)
 # seed = 3407
 # torch.manual_seed(seed)
 # =============================================
-Thetarget = 'adam'
+Thetarget = '大维度'
 # =============================================
 torch.cuda.set_device(0)
 device = torch.device("cuda:0")
@@ -119,7 +119,7 @@ recent_val_losses = []
 recent_val_accs = []
 recent_train_accs = []
 lr_increase_factor = 1.05
-lr_decrease_factor = 0.8  # 学习率减小的因子
+lr_decrease_factor = 0.9  # 学习率减小的因子
 tolerance = 0.01  # 容忍度
 
 for epoch in range(epochs):
@@ -214,9 +214,9 @@ for epoch in range(epochs):
                 param_group['lr'] = lr
             print(f"{bcolors.UNDERLINE}Learning rate {bcolors.RED}increased{bcolors.UNDERLINE} to {lr:.6f}{bcolors.WHITE}")
 
-        # 减小学习率的条件: 训练精度达到了0.85以上
-        if(recent_train_accs[-1] > 0.85):
-            lr *= lr_decrease_factor # lr_decrease_factor = 0.8
+        # 减小学习率的条件: 每十个周期就减小一次学习率
+        if (epoch + 1) % 10 == 0:
+            lr *= lr_decrease_factor # lr_decrease_factor = 0.9
             for param_group in optimizer.param_groups:
                 param_group['lr'] = lr
             print(f"{bcolors.UNDERLINE}Learning rate {bcolors.GREEN}decreased{bcolors.UNDERLINE} to {lr:.6f}{bcolors.WHITE}")
