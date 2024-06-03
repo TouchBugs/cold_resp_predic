@@ -17,7 +17,7 @@ Thetarget = '大维度'
 torch.cuda.set_device(0)
 device = torch.device("cuda:0")
 
-lr = 0.001
+lr = 0.01
 weight_decay = 1e-4
 epochs = 100
 
