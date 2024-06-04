@@ -121,10 +121,7 @@ class GCN_MLP(nn.Module):
         CNN_out = self.makeFeature(data_for_cnn).squeeze(2) # ([32, 512])
         
         x = CNN_out
-        x = self.SeLU(x)
-        
         x = self.dropout(self.fc2(x))
-        x = self.SeLU(x)
         x = self.fc3(x)
         x = self.sigmoid(x)
         return x
