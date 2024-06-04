@@ -39,13 +39,9 @@ class CNN_structure(nn.Module):
         self.bn8 = nn.BatchNorm1d(128)
 
     def forward(self, x:torch.Tensor)->tuple:
-        # x1 = self.dropout(self.bn1(self.conv1(x)))
-        # x2 = self.dropout(self.bn2(self.conv2(x)))
-        # x3 = self.dropout(self.bn3(self.conv3(x)))
+
         x4 = self.dropout(self.bn4(self.conv4(x)))
-        # x5 = self.dropout(self.bn5(self.conv5(x)))
-        # x6 = self.dropout(self.bn6(self.conv6(x)))
-        # x7 = self.dropout(self.bn7(self.conv7(x)))
+
         x8 = self.dropout(self.bn8(self.conv8(x)))    
         # print('x1.shape', x1.shape, 'x2.shape', x2.shape, 'x3.shape', x3.shape, 'x4.shape', x4.shape, 'x5.shape', x5.shape, 'x6.shape', x6.shape, 'x7.shape', x7.shape, 'x8.shape', x8.shape)
         # return x1, x2, x3, x4, x5, x6, x7, x8
@@ -59,7 +55,7 @@ class make_feature(nn.Module):
         self.conv1 = nn.Conv1d(in_channels=8, out_channels=16, kernel_size=5, stride=2, padding=0)
         self.conv2 = nn.Conv1d(in_channels=16, out_channels=32, kernel_size=5, stride=2, padding=0)
         self.Relu = nn.ReLU()
-        
+        self.Tanh = nn.Tanh()
         # torch.dropout
         self.dropout = nn.Dropout(p=0.2)
         # tanh激活函数
@@ -69,20 +65,7 @@ class make_feature(nn.Module):
 
     def forward(self, x):
         x = self.Relu(self.bn1(self.conv0(x)))
-        # print('x0.shape', x.shape)
-        # 最大池化
-        # x = F.max_pool1d(x, kernel_size=4, stride=5)
-        # print('池化', x)
-        # print('x0.1.shape', x.shape)
-        # x = self.Relu(self.bn2(self.conv1(x)))
-        # print('x0.2.shape', x.shape)
-        # x = F.max_pool1d(x, kernel_size=2, stride=2)
-        # print('x1.shape', x.shape)
-        # x = self.Relu(self.bn3(self.conv2(x)))
-        # print(x.shape)
-        # x = F.max_pool1d(x, kernel_size=2, stride=2)
-        # print(x.shape)
-        # print('x2.shape', x.shape)
+
         out = []
         for i in self.cnn(x):
             # print('i.shape', i.shape)
@@ -95,7 +78,7 @@ class make_feature(nn.Module):
             # 将池化后的结果沿着通道维度拼接在一起
             output_tensor = torch.cat(pooled_tensors, dim=1)
             out.append(output_tensor)
-        output = self.Relu(torch.cat(out, dim=1)) # 我希望feature的值都在-1-1之间 Relu
+        output = self.Tanh(torch.cat(out, dim=1)) # 我希望feature的值都在-1-1之间 tanh
         # print(output.shape)
         return output # torch.Size([32, 512, 1])
 
