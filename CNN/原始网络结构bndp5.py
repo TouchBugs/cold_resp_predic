@@ -56,15 +56,8 @@ class make_feature(nn.Module):
 
         out = []
         for i in self.cnn(x):
-            # print('i.shape', i.shape)
-            pooled_tensors = []
-            for num in range(i.size(1)):
-                # 对当前通道进行全局最大池化操作
-                pooled_tensor = F.adaptive_max_pool2d(i[:, num:num+1, :], (1, 1))
-                # print('pooled_tensor.shape', pooled_tensor.shape)
-                pooled_tensors.append(pooled_tensor)
-            # 将池化后的结果沿着通道维度拼接在一起
-            output_tensor = torch.cat(pooled_tensors, dim=1)
+            # print('i.shape', i.shape)([32, 128, 46378])
+            output_tensor = F.adaptive_avg_pool1d(i, 1)
             out.append(output_tensor)
         output = self.Tanh(torch.cat(out, dim=1)) # 我希望feature的值都在-1-1之间 tanh
         # print(output.shape)
