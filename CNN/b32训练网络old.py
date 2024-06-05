@@ -118,7 +118,7 @@ recent_train_losses = []
 recent_val_losses = []
 recent_val_accs = []
 recent_train_accs = []
-lr_increase_factor = 1.05
+lr_increase_factor = 1.1
 lr_decrease_factor = 0.9  # 学习率减小的因子
 tolerance = 0.01  # 容忍度
 
