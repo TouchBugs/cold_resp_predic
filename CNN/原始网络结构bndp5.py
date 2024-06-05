@@ -20,22 +20,10 @@ class bcolors:
 class CNN_structure(nn.Module):
     def __init__(self):
         super(CNN_structure, self).__init__()
-        self.conv1 = nn.Conv1d(in_channels=8*4, out_channels=128, kernel_size=24, stride=12, padding=0)
-        self.conv2 = nn.Conv1d(in_channels=8*4, out_channels=128, kernel_size=20, stride=10, padding=0)
-        self.conv3 = nn.Conv1d(in_channels=8*4, out_channels=128, kernel_size=16, stride=8, padding=0)
         self.conv4 = nn.Conv1d(in_channels=8*4, out_channels=128, kernel_size=10, stride=5, padding=0)
-        self.conv5 = nn.Conv1d(in_channels=8*4, out_channels=128, kernel_size=8, stride=4, padding=0)
-        self.conv6 = nn.Conv1d(in_channels=8*4, out_channels=128, kernel_size=6, stride=3, padding=0)
-        self.conv7 = nn.Conv1d(in_channels=8*4, out_channels=128, kernel_size=4, stride=2, padding=0)
         self.conv8 = nn.Conv1d(in_channels=8*4, out_channels=128, kernel_size=2, stride=1, padding=0)
         self.dropout = nn.Dropout(p=0.2)
-        self.bn1 = nn.BatchNorm1d(128)
-        self.bn2 = nn.BatchNorm1d(128)
-        self.bn3 = nn.BatchNorm1d(128)
         self.bn4 = nn.BatchNorm1d(128)
-        self.bn5 = nn.BatchNorm1d(128)
-        self.bn6 = nn.BatchNorm1d(128)
-        self.bn7 = nn.BatchNorm1d(128)
         self.bn8 = nn.BatchNorm1d(128)
 
     def forward(self, x:torch.Tensor)->tuple:
