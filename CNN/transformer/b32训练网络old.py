@@ -137,7 +137,7 @@ for epoch in range(epochs):
             permuted_sequence, permuted_label, num1s, num0s = preprocess(num1s, num0s, f)
             permuted_sequence, permuted_label = permuted_sequence.to(device), permuted_label.to(device)
 
-            outputs = model(permuted_sequence)
+            outputs = model(permuted_sequence, permuted_label)
             loss = criterion(outputs, permuted_label)
             epoch_loss += loss.item()
 
@@ -176,7 +176,7 @@ for epoch in range(epochs):
                 permuted_sequence, permuted_label, num1s, num0s = preprocess(num1s, num0s, f)
                 permuted_sequence, permuted_label = permuted_sequence.to(device), permuted_label.to(device)
 
-                outputs = model(permuted_sequence)
+                outputs = model(permuted_sequence, permuted_label)
                 loss = criterion(outputs, permuted_label)
                 val_loss += loss.item()
 
