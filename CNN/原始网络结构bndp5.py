@@ -67,13 +67,13 @@ class GCN_MLP(nn.Module):
     def __init__(self):
         super(GCN_MLP, self).__init__()
         
-        self.fc2 = Linear(256, 512)
-        self.fc3 = Linear(512, 1)
+        self.fc2 = Linear(256, 128)
+        self.fc3 = Linear(128, 1)
         self.makeFeature = make_feature()
         self.SeLU = nn.SELU()
         # tanh激活函数
 
-        self.dropout = nn.Dropout(p=0.1)
+        self.dropout = nn.Dropout(p=0.01)
         self.bn1 = nn.BatchNorm1d(1024)
         self.bn2 = nn.BatchNorm1d(512)
         # sigmoid激活函数
@@ -86,6 +86,7 @@ class GCN_MLP(nn.Module):
         
         x = CNN_out
         x = self.dropout(self.fc2(x))
+        x = self.SeLU(x)
         x = self.fc3(x)
         x = self.sigmoid(x)
         return x
