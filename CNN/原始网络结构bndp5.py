@@ -74,17 +74,17 @@ class GCN_MLP(nn.Module):
         # tanh激活函数
 
         self.dropout = nn.Dropout(p=0.01)
-        self.bn1 = nn.BatchNorm1d(1024)
-        self.bn2 = nn.BatchNorm1d(512)
+        
+        self.bn2 = nn.BatchNorm1d(128)
         # sigmoid激活函数
         self.sigmoid = nn.Sigmoid()
 
     def forward(self, data_for_cnn):
         # print(data_for_cnn.shape) # torch.Size([32, 46398])
         data_for_cnn = data_for_cnn.unsqueeze(1) # ([32, 1, 46398])
-        CNN_out = self.makeFeature(data_for_cnn).squeeze(2) # ([32, 512])
+        CNN_out = self.makeFeature(data_for_cnn).squeeze(2) # ([32, 128])
         
-        x = CNN_out
+        x = self.bn2(CNN_out)
         x = self.dropout(self.fc2(x))
         x = self.SeLU(x)
         x = self.fc3(x)
