@@ -12,7 +12,7 @@ print(TheTime)
 # seed = 3407
 # torch.manual_seed(seed)
 # =============================================
-Thetarget = '大维度'
+Thetarget = ''
 # =============================================
 torch.cuda.set_device(0)
 device = torch.device("cuda:0")
@@ -21,7 +21,7 @@ lr = 0.001
 weight_decay = 1e-4
 epochs = 100
 
-best_acc = 0.8
+best_acc = 0.7
 root_dir = '/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/CNN/'
 loss_png = root_dir + f'loss-lr{lr}-wd{weight_decay}-ep{epochs}-{TheTime}-{Thetarget}.png'
 acc_png = root_dir + f'acc-lr{lr}-wd{weight_decay}-ep{epochs}-{TheTime}-{Thetarget}.png'
@@ -196,30 +196,28 @@ for epoch in range(epochs):
     recent_val_losses.append(val_loss)
     recent_val_accs.append(right_num / (num1s + num0s))
 
-    # 增大和减小学习率的判断
-    if len(recent_train_losses) > 4 and len(recent_val_losses) > 4 and len(recent_val_accs) > 4:
-        recent_train_losses.pop(0)
-        recent_val_losses.pop(0)
-        recent_val_accs.pop(0)
+    # # 增大和减小学习率的判断
+    # if len(recent_train_losses) > 4 and len(recent_val_losses) > 4 and len(recent_val_accs) > 4:
+    #     recent_train_losses.pop(0)
+    #     recent_val_losses.pop(0)
+    #     recent_val_accs.pop(0)
 
-        # 增大学习率的条件
-        # 如果loss增大，且准确率减小，说明学习率过大，需要减小学习率，减小到原来的0.7倍
-        # 如果loss减小，且准确率增大，就增大学习率，增大到原来的1.05倍，加速收敛 tolerance=0.01
-        if (recent_train_losses[-1] > recent_train_losses[0] * (1 - tolerance)) and \
-           (recent_val_losses[-1] > recent_val_losses[0] * (1 - tolerance)) and \
-           (recent_val_accs[-1] < recent_val_accs[0] * (1 + tolerance) and \
-            recent_train_accs[-1] <= 0.85):
-            lr *= lr_increase_factor # lr_increase_factor = 1.05
-            for param_group in optimizer.param_groups:
-                param_group['lr'] = lr
-            print(f"{bcolors.UNDERLINE}Learning rate {bcolors.RED}increased{bcolors.UNDERLINE} to {lr:.6f}{bcolors.WHITE}")
+    
+    #     if (recent_train_losses[-1] > recent_train_losses[0] * (1 - tolerance)) and \
+    #        (recent_val_losses[-1] > recent_val_losses[0] * (1 - tolerance)) and \
+    #        (recent_val_accs[-1] < recent_val_accs[0] * (1 + tolerance) and \
+    #         recent_train_accs[-1] <= 0.85):
+    #         lr *= lr_increase_factor # lr_increase_factor = 1.05
+    #         for param_group in optimizer.param_groups:
+    #             param_group['lr'] = lr
+    #         print(f"{bcolors.UNDERLINE}Learning rate {bcolors.RED}increased{bcolors.UNDERLINE} to {lr:.6f}{bcolors.WHITE}")
 
-        # 减小学习率的条件: 每十个周期就减小一次学习率
-        if (epoch + 1) % 10 == 0:
-            lr *= lr_decrease_factor # lr_decrease_factor = 0.9
-            for param_group in optimizer.param_groups:
-                param_group['lr'] = lr
-            print(f"{bcolors.UNDERLINE}Learning rate {bcolors.GREEN}decreased{bcolors.UNDERLINE} to {lr:.6f}{bcolors.WHITE}")
+    #     # 减小学习率的条件: 每十个周期就减小一次学习率
+    #     if (epoch + 1) % 10 == 0:
+    #         lr *= lr_decrease_factor # lr_decrease_factor = 0.9
+    #         for param_group in optimizer.param_groups:
+    #             param_group['lr'] = lr
+    #         print(f"{bcolors.UNDERLINE}Learning rate {bcolors.GREEN}decreased{bcolors.UNDERLINE} to {lr:.6f}{bcolors.WHITE}")
 
     if val_accs[-1] > best_acc:
         best_acc = val_accs[-1]

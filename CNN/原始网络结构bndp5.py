@@ -20,11 +20,11 @@ class bcolors:
 class CNN_structure(nn.Module):
     def __init__(self):
         super(CNN_structure, self).__init__()
-        self.conv4 = nn.Conv1d(in_channels=8*4, out_channels=128, kernel_size=10, stride=5, padding=0)
-        self.conv8 = nn.Conv1d(in_channels=8*4, out_channels=128, kernel_size=2, stride=1, padding=0)
-        self.dropout = nn.Dropout(p=0.2)
-        self.bn4 = nn.BatchNorm1d(128)
-        self.bn8 = nn.BatchNorm1d(128)
+        self.conv4 = nn.Conv1d(in_channels=8*4, out_channels=64, kernel_size=10, stride=5, padding=0)
+        self.conv8 = nn.Conv1d(in_channels=8*4, out_channels=64, kernel_size=2, stride=1, padding=0)
+        self.dropout = nn.Dropout(p=0.02)
+        self.bn4 = nn.BatchNorm1d(64)
+        self.bn8 = nn.BatchNorm1d(64)
 
     def forward(self, x:torch.Tensor)->tuple:
 
@@ -67,8 +67,8 @@ class GCN_MLP(nn.Module):
     def __init__(self):
         super(GCN_MLP, self).__init__()
         
-        self.fc2 = Linear(256, 128)
-        self.fc3 = Linear(128, 1)
+        self.fc2 = Linear(128, 64)
+        self.fc3 = Linear(64, 1)
         self.makeFeature = make_feature()
         self.SeLU = nn.SELU()
         # tanh激活函数
