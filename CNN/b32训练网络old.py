@@ -221,7 +221,7 @@ for epoch in range(epochs):
 
     if val_accs[-1] > best_acc:
         best_acc = val_accs[-1]
-        torch.save(model.state_dict(), root_dir + f'model({epoch}-{best_acc:.4f}-{lr}-{weight_decay}-{epochs}-{TheTime}--{Thetarget}).pth')
+        torch.save(model.state_dict(), root_dir + f'model({epoch}/{epochs}-{best_acc:.4f}-{val_precision}-{val_recall}-{val_f1}-{lr}-{weight_decay}-{TheTime}--{Thetarget}).pth')
 
 
 def plot_metric(train_metric, val_metric, metric_name, y_label, save_path):
