@@ -1,1 +1,287 @@
 nohup: ignoring input
+/opt/conda/conda-bld/pytorch_1699449200967/work/aten/src/ATen/native/cuda/Loss.cu:94: operator(): block: [0,0,0], thread: [0,0,0] Assertion `input_val >= zero && input_val <= one` failed.
+/opt/conda/conda-bld/pytorch_1699449200967/work/aten/src/ATen/native/cuda/Loss.cu:94: operator(): block: [0,0,0], thread: [1,0,0] Assertion `input_val >= zero && input_val <= one` failed.
+/opt/conda/conda-bld/pytorch_1699449200967/work/aten/src/ATen/native/cuda/Loss.cu:94: operator(): block: [0,0,0], thread: [2,0,0] Assertion `input_val >= zero && input_val <= one` failed.
+/opt/conda/conda-bld/pytorch_1699449200967/work/aten/src/ATen/native/cuda/Loss.cu:94: operator(): block: [0,0,0], thread: [3,0,0] Assertion `input_val >= zero && input_val <= one` failed.
+/opt/conda/conda-bld/pytorch_1699449200967/work/aten/src/ATen/native/cuda/Loss.cu:94: operator(): block: [0,0,0], thread: [4,0,0] Assertion `input_val >= zero && input_val <= one` failed.
+/opt/conda/conda-bld/pytorch_1699449200967/work/aten/src/ATen/native/cuda/Loss.cu:94: operator(): block: [0,0,0], thread: [5,0,0] Assertion `input_val >= zero && input_val <= one` failed.
+/opt/conda/conda-bld/pytorch_1699449200967/work/aten/src/ATen/native/cuda/Loss.cu:94: operator(): block: [0,0,0], thread: [6,0,0] Assertion `input_val >= zero && input_val <= one` failed.
+/opt/conda/conda-bld/pytorch_1699449200967/work/aten/src/ATen/native/cuda/Loss.cu:94: operator(): block: [0,0,0], thread: [7,0,0] Assertion `input_val >= zero && input_val <= one` failed.
+/opt/conda/conda-bld/pytorch_1699449200967/work/aten/src/ATen/native/cuda/Loss.cu:94: operator(): block: [0,0,0], thread: [8,0,0] Assertion `input_val >= zero && input_val <= one` failed.
+/opt/conda/conda-bld/pytorch_1699449200967/work/aten/src/ATen/native/cuda/Loss.cu:94: operator(): block: [0,0,0], thread: [9,0,0] Assertion `input_val >= zero && input_val <= one` failed.
+/opt/conda/conda-bld/pytorch_1699449200967/work/aten/src/ATen/native/cuda/Loss.cu:94: operator(): block: [0,0,0], thread: [10,0,0] Assertion `input_val >= zero && input_val <= one` failed.
+/opt/conda/conda-bld/pytorch_1699449200967/work/aten/src/ATen/native/cuda/Loss.cu:94: operator(): block: [0,0,0], thread: [11,0,0] Assertion `input_val >= zero && input_val <= one` failed.
+/opt/conda/conda-bld/pytorch_1699449200967/work/aten/src/ATen/native/cuda/Loss.cu:94: operator(): block: [0,0,0], thread: [12,0,0] Assertion `input_val >= zero && input_val <= one` failed.
+/opt/conda/conda-bld/pytorch_1699449200967/work/aten/src/ATen/native/cuda/Loss.cu:94: operator(): block: [0,0,0], thread: [13,0,0] Assertion `input_val >= zero && input_val <= one` failed.
+/opt/conda/conda-bld/pytorch_1699449200967/work/aten/src/ATen/native/cuda/Loss.cu:94: operator(): block: [0,0,0], thread: [14,0,0] Assertion `input_val >= zero && input_val <= one` failed.
+/opt/conda/conda-bld/pytorch_1699449200967/work/aten/src/ATen/native/cuda/Loss.cu:94: operator(): block: [0,0,0], thread: [15,0,0] Assertion `input_val >= zero && input_val <= one` failed.
+/opt/conda/conda-bld/pytorch_1699449200967/work/aten/src/ATen/native/cuda/Loss.cu:94: operator(): block: [0,0,0], thread: [16,0,0] Assertion `input_val >= zero && input_val <= one` failed.
+/opt/conda/conda-bld/pytorch_1699449200967/work/aten/src/ATen/native/cuda/Loss.cu:94: operator(): block: [0,0,0], thread: [17,0,0] Assertion `input_val >= zero && input_val <= one` failed.
+/opt/conda/conda-bld/pytorch_1699449200967/work/aten/src/ATen/native/cuda/Loss.cu:94: operator(): block: [0,0,0], thread: [18,0,0] Assertion `input_val >= zero && input_val <= one` failed.
+/opt/conda/conda-bld/pytorch_1699449200967/work/aten/src/ATen/native/cuda/Loss.cu:94: operator(): block: [0,0,0], thread: [19,0,0] Assertion `input_val >= zero && input_val <= one` failed.
+/opt/conda/conda-bld/pytorch_1699449200967/work/aten/src/ATen/native/cuda/Loss.cu:94: operator(): block: [0,0,0], thread: [20,0,0] Assertion `input_val >= zero && input_val <= one` failed.
+/opt/conda/conda-bld/pytorch_1699449200967/work/aten/src/ATen/native/cuda/Loss.cu:94: operator(): block: [0,0,0], thread: [21,0,0] Assertion `input_val >= zero && input_val <= one` failed.
+/opt/conda/conda-bld/pytorch_1699449200967/work/aten/src/ATen/native/cuda/Loss.cu:94: operator(): block: [0,0,0], thread: [22,0,0] Assertion `input_val >= zero && input_val <= one` failed.
+/opt/conda/conda-bld/pytorch_1699449200967/work/aten/src/ATen/native/cuda/Loss.cu:94: operator(): block: [0,0,0], thread: [23,0,0] Assertion `input_val >= zero && input_val <= one` failed.
+/opt/conda/conda-bld/pytorch_1699449200967/work/aten/src/ATen/native/cuda/Loss.cu:94: operator(): block: [0,0,0], thread: [24,0,0] Assertion `input_val >= zero && input_val <= one` failed.
+/opt/conda/conda-bld/pytorch_1699449200967/work/aten/src/ATen/native/cuda/Loss.cu:94: operator(): block: [0,0,0], thread: [25,0,0] Assertion `input_val >= zero && input_val <= one` failed.
+/opt/conda/conda-bld/pytorch_1699449200967/work/aten/src/ATen/native/cuda/Loss.cu:94: operator(): block: [0,0,0], thread: [26,0,0] Assertion `input_val >= zero && input_val <= one` failed.
+/opt/conda/conda-bld/pytorch_1699449200967/work/aten/src/ATen/native/cuda/Loss.cu:94: operator(): block: [0,0,0], thread: [27,0,0] Assertion `input_val >= zero && input_val <= one` failed.
+/opt/conda/conda-bld/pytorch_1699449200967/work/aten/src/ATen/native/cuda/Loss.cu:94: operator(): block: [0,0,0], thread: [28,0,0] Assertion `input_val >= zero && input_val <= one` failed.
+/opt/conda/conda-bld/pytorch_1699449200967/work/aten/src/ATen/native/cuda/Loss.cu:94: operator(): block: [0,0,0], thread: [29,0,0] Assertion `input_val >= zero && input_val <= one` failed.
+/opt/conda/conda-bld/pytorch_1699449200967/work/aten/src/ATen/native/cuda/Loss.cu:94: operator(): block: [0,0,0], thread: [30,0,0] Assertion `input_val >= zero && input_val <= one` failed.
+/opt/conda/conda-bld/pytorch_1699449200967/work/aten/src/ATen/native/cuda/Loss.cu:94: operator(): block: [0,0,0], thread: [31,0,0] Assertion `input_val >= zero && input_val <= one` failed.
+2024-06-17-17:51:24
+创建模型实例
+模型实例创建完成
+Epoch [1/100], Loss: 93.6734
+train_Accuracy: [91m0.5249[0m
+train_Precision: [4;34m0.4269[0m,               train_Recall: [4;33m0.4311[0m,                 train_F1 Score: [4;35m0.3775[0m
+标签里1的个数:  2150
+标签里0的个数:  2150
+总数:  4300
+正确的个数:  2257
+最后一个批次的输出, 不满batchsize是正常的:
+ tensor([[0.6103],
+        [0.4972],
+        [0.4814],
+        [0.4178],
+        [0.6083],
+        [0.4719],
+        [0.5977],
+        [0.6167],
+        [0.5623],
+        [0.5960],
+        [0.4677],
+        [0.5049]], device='cuda:0', grad_fn=<SigmoidBackward0>)
+Epoch [1/100], Loss: 18.7505
+val_Accuracy: [92m0.5209[0m
+val_Precision: [4;34m0.5217[0m,               val_Recall: [4;33m0.6092[0m,                 val_F1 Score: [4;35m0.5536[0m
+标签里1的个数:  430
+标签里0的个数:  430
+总数:  860
+正确的个数:  448
+Epoch [2/100], Loss: 94.0483
+train_Accuracy: [91m0.5219[0m
+train_Precision: [4;34m0.4614[0m,               train_Recall: [4;33m0.5010[0m,                 train_F1 Score: [4;35m0.4310[0m
+标签里1的个数:  2150
+标签里0的个数:  2150
+总数:  4300
+正确的个数:  2244
+最后一个批次的输出, 不满batchsize是正常的:
+ tensor([[0.5546],
+        [0.4889],
+        [0.4989],
+        [0.4701],
+        [0.5480],
+        [0.5012],
+        [0.5513],
+        [0.5561],
+        [0.5213],
+        [0.5539],
+        [0.4961],
+        [0.4858]], device='cuda:0', grad_fn=<SigmoidBackward0>)
+Epoch [2/100], Loss: 18.6084
+val_Accuracy: [92m0.5267[0m
+val_Precision: [4;34m0.5336[0m,               val_Recall: [4;33m0.5303[0m,                 val_F1 Score: [4;35m0.5204[0m
+标签里1的个数:  430
+标签里0的个数:  430
+总数:  860
+正确的个数:  453
+Epoch [3/100], Loss: 93.1626
+train_Accuracy: [91m0.5337[0m
+train_Precision: [4;34m0.5231[0m,               train_Recall: [4;33m0.4834[0m,                 train_F1 Score: [4;35m0.4679[0m
+标签里1的个数:  2150
+标签里0的个数:  2150
+总数:  4300
+正确的个数:  2295
+最后一个批次的输出, 不满batchsize是正常的:
+ tensor([[0.6108],
+        [0.4889],
+        [0.5074],
+        [0.4528],
+        [0.6108],
+        [0.4818],
+        [0.5970],
+        [0.6063],
+        [0.5139],
+        [0.5677],
+        [0.5049],
+        [0.4688]], device='cuda:0', grad_fn=<SigmoidBackward0>)
+Epoch [3/100], Loss: 18.6544
+val_Accuracy: [92m0.5233[0m
+val_Precision: [4;34m0.5278[0m,               val_Recall: [4;33m0.4891[0m,                 val_F1 Score: [4;35m0.4969[0m
+标签里1的个数:  430
+标签里0的个数:  430
+总数:  860
+正确的个数:  450
+Epoch [4/100], Loss: 93.0605
+train_Accuracy: [91m0.5391[0m
+train_Precision: [4;34m0.5311[0m,               train_Recall: [4;33m0.4435[0m,                 train_F1 Score: [4;35m0.4510[0m
+标签里1的个数:  2150
+标签里0的个数:  2150
+总数:  4300
+正确的个数:  2318
+最后一个批次的输出, 不满batchsize是正常的:
+ tensor([[0.5195],
+        [0.4379],
+        [0.4683],
+        [0.4281],
+        [0.5169],
+        [0.4559],
+        [0.5347],
+        [0.5073],
+        [0.4939],
+        [0.5378],
+        [0.4596],
+        [0.4551]], device='cuda:0', grad_fn=<SigmoidBackward0>)
+Epoch [4/100], Loss: 18.6721
+val_Accuracy: [92m0.5407[0m
+val_Precision: [4;34m0.5642[0m,               val_Recall: [4;33m0.3565[0m,                 val_F1 Score: [4;35m0.4241[0m
+标签里1的个数:  430
+标签里0的个数:  430
+总数:  860
+正确的个数:  465
+Epoch [5/100], Loss: 93.1125
+train_Accuracy: [91m0.5460[0m
+train_Precision: [4;34m0.5360[0m,               train_Recall: [4;33m0.4079[0m,                 train_F1 Score: [4;35m0.4243[0m
+标签里1的个数:  2150
+标签里0的个数:  2150
+总数:  4300
+正确的个数:  2348
+最后一个批次的输出, 不满batchsize是正常的:
+ tensor([[0.5209],
+        [0.4511],
+        [0.4790],
+        [0.4439],
+        [0.5182],
+        [0.4527],
+        [0.5236],
+        [0.5064],
+        [0.4775],
+        [0.4906],
+        [0.4663],
+        [0.4156]], device='cuda:0', grad_fn=<SigmoidBackward0>)
+Epoch [5/100], Loss: 18.6723
+val_Accuracy: [92m0.5267[0m
+val_Precision: [4;34m0.5576[0m,               val_Recall: [4;33m0.2609[0m,                 val_F1 Score: [4;35m0.3415[0m
+标签里1的个数:  430
+标签里0的个数:  430
+总数:  860
+正确的个数:  453
+Epoch [6/100], Loss: 93.1215
+train_Accuracy: [91m0.5388[0m
+train_Precision: [4;34m0.4744[0m,               train_Recall: [4;33m0.3932[0m,                 train_F1 Score: [4;35m0.3937[0m
+标签里1的个数:  2150
+标签里0的个数:  2150
+总数:  4300
+正确的个数:  2317
+最后一个批次的输出, 不满batchsize是正常的:
+ tensor([[0.5447],
+        [0.4883],
+        [0.4989],
+        [0.4860],
+        [0.5418],
+        [0.4875],
+        [0.5462],
+        [0.5386],
+        [0.5262],
+        [0.5512],
+        [0.4910],
+        [0.5055]], device='cuda:0', grad_fn=<SigmoidBackward0>)
+Epoch [6/100], Loss: 18.6488
+val_Accuracy: [92m0.5291[0m
+val_Precision: [4;34m0.5318[0m,               val_Recall: [4;33m0.5715[0m,                 val_F1 Score: [4;35m0.5416[0m
+标签里1的个数:  430
+标签里0的个数:  430
+总数:  860
+正确的个数:  455
+Epoch [7/100], Loss: 93.0558
+train_Accuracy: [91m0.5467[0m
+train_Precision: [4;34m0.5663[0m,               train_Recall: [4;33m0.4870[0m,                 train_F1 Score: [4;35m0.4889[0m
+标签里1的个数:  2150
+标签里0的个数:  2150
+总数:  4300
+正确的个数:  2351
+最后一个批次的输出, 不满batchsize是正常的:
+ tensor([[0.5772],
+        [0.4614],
+        [0.4705],
+        [0.4522],
+        [0.5887],
+        [0.4670],
+        [0.5500],
+        [0.5789],
+        [0.5154],
+        [0.5623],
+        [0.4689],
+        [0.4908]], device='cuda:0', grad_fn=<SigmoidBackward0>)
+Epoch [7/100], Loss: 18.6087
+val_Accuracy: [92m0.5337[0m
+val_Precision: [4;34m0.5376[0m,               val_Recall: [4;33m0.5106[0m,                 val_F1 Score: [4;35m0.5150[0m
+标签里1的个数:  430
+标签里0的个数:  430
+总数:  860
+正确的个数:  459
+Epoch [8/100], Loss: 92.8147
+train_Accuracy: [91m0.5388[0m
+train_Precision: [4;34m0.5470[0m,               train_Recall: [4;33m0.4547[0m,                 train_F1 Score: [4;35m0.4636[0m
+标签里1的个数:  2150
+标签里0的个数:  2150
+总数:  4300
+正确的个数:  2317
+最后一个批次的输出, 不满batchsize是正常的:
+ tensor([[0.5240],
+        [0.4705],
+        [0.4685],
+        [0.4831],
+        [0.5218],
+        [0.4633],
+        [0.5054],
+        [0.5157],
+        [0.5015],
+        [0.5012],
+        [0.4642],
+        [0.4624]], device='cuda:0', grad_fn=<SigmoidBackward0>)
+Epoch [8/100], Loss: 18.6366
+val_Accuracy: [92m0.5314[0m
+val_Precision: [4;34m0.5462[0m,               val_Recall: [4;33m0.3906[0m,                 val_F1 Score: [4;35m0.4436[0m
+标签里1的个数:  430
+标签里0的个数:  430
+总数:  860
+正确的个数:  457
+Epoch [9/100], Loss: 92.7819
+train_Accuracy: [91m0.5409[0m
+train_Precision: [4;34m0.5439[0m,               train_Recall: [4;33m0.4530[0m,                 train_F1 Score: [4;35m0.4693[0m
+标签里1的个数:  2150
+标签里0的个数:  2150
+总数:  4300
+正确的个数:  2326
+最后一个批次的输出, 不满batchsize是正常的:
+ tensor([[0.6190],
+        [0.4558],
+        [0.4604],
+        [0.4359],
+        [0.6106],
+        [0.4601],
+        [0.5594],
+        [0.6110],
+        [0.4968],
+        [0.5513],
+        [0.4530],
+        [0.4882]], device='cuda:0', grad_fn=<SigmoidBackward0>)
+Epoch [9/100], Loss: 18.6180
+val_Accuracy: [92m0.5291[0m
+val_Precision: [4;34m0.5351[0m,               val_Recall: [4;33m0.4189[0m,                 val_F1 Score: [4;35m0.4611[0m
+标签里1的个数:  430
+标签里0的个数:  430
+总数:  860
+正确的个数:  455
+Traceback (most recent call last):
+  File "/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/CNN/GRU.py", line 138, in <module>
+    epoch_loss += loss.item()
+RuntimeError: CUDA error: device-side assert triggered
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1.
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+

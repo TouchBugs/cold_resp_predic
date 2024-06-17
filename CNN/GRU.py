@@ -16,6 +16,7 @@ Thetarget = ''
 # =============================================
 torch.cuda.set_device(0)
 device = torch.device("cuda:0")
+# device = torch.device("cpu")
 
 lr = 0.01
 weight_decay = 1e-4
@@ -135,6 +136,7 @@ for epoch in range(epochs):
 
             outputs = model(permuted_sequence)
             loss = criterion(outputs, permuted_label)
+            # print(loss)
             epoch_loss += loss.item()
 
             outputs10 = torch.where(outputs >= 0.5, torch.tensor(1.0, dtype=torch.float32).to(device), torch.tensor(0.0, dtype=torch.float32).to(device))
