@@ -31,7 +31,6 @@ class CNN_structure(nn.Module):
         x4 = self.dropout(self.bn4(self.conv4(x)))
 
         x8 = self.dropout(self.bn8(self.conv8(x)))    
-        # print('x1.shape', x1.shape, 'x2.shape', x2.shape, 'x3.shape', x3.shape, 'x4.shape', x4.shape, 'x5.shape', x5.shape, 'x6.shape', x6.shape, 'x7.shape', x7.shape, 'x8.shape', x8.shape)
         # return x1, x2, x3, x4, x5, x6, x7, x8
         return x4, x8
 
@@ -90,3 +89,9 @@ class GCN_MLP(nn.Module):
         x = self.fc3(x)
         x = self.sigmoid(x)
         return x
+
+if __name__ == '__main__':
+    # 总结模型, 输出每一层的形状
+    model = GCN_MLP()
+    from torchinfo import summary
+    summary(model, input_size=(32, 46398))  # 确保输入尺寸和格式是正确的
