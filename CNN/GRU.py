@@ -1,3 +1,4 @@
+from sympy import im
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -25,7 +26,7 @@ class SimpleGRU(nn.Module):
 # 测试数据加载器和GRU模型
 def main():
     # 参数设置
-    file_path = '/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/CNN/测试代码数据集.csv'  # 替换为你的文件路径
+    file_path = '/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/分好的数据集csv/二进制GRU/train/train_batch_0.pkl'  # 替换为你的文件路径
     max_len = 50  # 最大序列长度
     vocab_size = 5  # 独热编码的维度 (A, C, G, T)
     input_size = vocab_size  # 输入特征维度
@@ -35,16 +36,18 @@ def main():
 
 
     # 创建数据集和数据加载器
-    dataset = GeneDataset(file_path, max_len, vocab_size)
-    dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True, collate_fn=collate_fn)
-
+    import pickle
+    with open(file_path, 'rb') as f:
+        dataloader = pickle.load(f)
+        
+        print(len(dataloader))
     model = SimpleGRU(input_size, hidden_size, output_size)
-    for packed_sequences, lengths, labels in dataloader:
-            # print(packed_sequences)
-            # print(labels)
-            outputs, hidden = model(packed_sequences)
-            print(outputs)
-            print(hidden.shape)
+    packed_sequences, lengths, labels = dataloader
+    print(lengths)
+    print(labels)
+
+
+
 
 if __name__ == "__main__":
     main()

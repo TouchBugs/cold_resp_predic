@@ -26,7 +26,7 @@ class GeneDataset(Dataset):
         self.data = pd.read_csv(file_path, header=None)
         self.max_len = max_len
         self.vocab_size = vocab_size
-        self.data['encoded_sequence'] = self.data[1].apply(lambda seq: one_hot_encode(seq, max_len, vocab_size))
+        self.data['encoded_sequence'] = self.data[1].apply(lambda seq: one_hot_encode(seq, max_len, vocab_size)) # type: ignore
         self.data['length'] = self.data[1].apply(len)
         self.labels = torch.tensor(self.data[2].values, dtype=torch.long)
 
