@@ -17,10 +17,10 @@ class SimpleGRU(nn.Module):
 
     
     def forward(self, packed_input):
-        packed_output, _ = self.gru(packed_input)
+        packed_output, hidden = self.gru(packed_input)
         output = pad_packed_sequence(packed_output, batch_first=True)
 
-        return output, _
+        return output, hidden
 
 
 # 测试数据加载器和GRU模型
@@ -45,7 +45,10 @@ def main():
     packed_sequences, lengths, labels = dataloader
     print(lengths)
     print(labels)
-
+    print(packed_sequences)
+    outputs, hidden = model(packed_sequences)
+    print(outputs)
+    print(hidden.shape)
 
 
 
