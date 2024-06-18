@@ -18,7 +18,7 @@ torch.cuda.set_device(0)
 device = torch.device("cuda:0")
 # device = torch.device("cpu")
 
-lr = 0.01
+lr = 0.001
 weight_decay = 1e-4
 epochs = 100
 
@@ -135,6 +135,11 @@ for epoch in range(epochs):
             permuted_sequence, permuted_label = permuted_sequence.to(device), permuted_label.to(device)
 
             outputs = model(permuted_sequence)
+            if outputs.isnan().any():
+                print('hidden:', outputs)
+                # raise ValueError('训练时模型输出存在NaN, 模型觉得很nan！')
+                print('训练时模型输出存在NaN, 模型觉得很nan！')
+                continue
             loss = criterion(outputs, permuted_label)
             # print(loss)
             epoch_loss += loss.item()
@@ -175,6 +180,11 @@ for epoch in range(epochs):
                 permuted_sequence, permuted_label = permuted_sequence.to(device), permuted_label.to(device)
 
                 outputs = model(permuted_sequence)
+                if outputs.isnan().any():
+                    print('hidden:', outputs)
+                    # raise ValueError('验证时模型输出存在NaN, 模型觉得很nan！')
+                    print('验证时模型输出存在NaN, 模型觉得很nan！')
+                    continue
                 loss = criterion(outputs, permuted_label)
                 val_loss += loss.item()
 
