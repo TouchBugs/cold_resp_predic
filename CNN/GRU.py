@@ -19,7 +19,7 @@ device = torch.device("cuda:0")
 # device = torch.device("cpu")
 
 lr = 0.001
-weight_decay = 1e-4
+weight_decay = 1e-5
 epochs = 100
 
 best_acc = 0.7
@@ -36,6 +36,8 @@ val_data_dir = data_root + '/val/'
 print('创建模型实例')
 model = SimpleGRU().to(device)
 print('模型实例创建完成')
+# 加载预训练参数
+model.load_state_dict(torch.load("/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/CNN/model(59_100-0.7907-0.8157845603867214-0.761828274632957-0.7830422119767823-0.001-0.0001-2024-06-17-23:08:57--).pth"))
 
 criterion = torch.nn.BCELoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay, eps=1e-10)
