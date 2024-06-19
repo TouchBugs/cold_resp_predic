@@ -12,7 +12,7 @@ print(TheTime)
 # seed = 3407
 # torch.manual_seed(seed)
 # =============================================
-Thetarget = '冻结GRU排序好的数据'
+Thetarget = '不冻结GRU排序好的数据'
 # =============================================
 torch.cuda.set_device(0)
 device = torch.device("cuda:0")
@@ -40,9 +40,9 @@ print('模型实例创建完成')
 print('加载预训练参数')
 gru_weight = torch.load('/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/CNN/gru_weight.pth')
 model.gru.load_state_dict(gru_weight)
-# 冻结 GRU 层的所有权重
-for param in model.gru.parameters():
-    param.requires_grad = False
+# # 冻结 GRU 层的所有权重
+# for param in model.gru.parameters():
+#     param.requires_grad = False
 print('预训练参数加载完成')
 
 criterion = torch.nn.BCELoss()
