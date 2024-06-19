@@ -12,7 +12,7 @@ print(TheTime)
 # seed = 3407
 # torch.manual_seed(seed)
 # =============================================
-Thetarget = '不冻结GRU排序好的数据'
+Thetarget = '不冻结GRU排序好的数据注意力'
 # =============================================
 torch.cuda.set_device(0)
 device = torch.device("cuda:0")
