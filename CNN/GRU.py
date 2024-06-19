@@ -36,8 +36,12 @@ val_data_dir = data_root + '/val/'
 print('创建模型实例')
 model = SimpleGRU().to(device)
 print('模型实例创建完成')
-# 加载预训练参数
-model.load_state_dict(torch.load("/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/CNN/model(59_100-0.7907-0.8157845603867214-0.761828274632957-0.7830422119767823-0.001-0.0001-2024-06-17-23:08:57--).pth"))
+# 只对GRU加载预训练参数
+gru_weight = torch.load('/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/CNN/gru_weight.pth')
+model.gru.load_state_dict(gru_weight)
+# 冻结 GRU 层的所有权重
+for param in model.gru.parameters():
+    param.requires_grad = False
 
 criterion = torch.nn.BCELoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay, eps=1e-10)

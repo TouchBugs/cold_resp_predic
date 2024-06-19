@@ -16,14 +16,18 @@ class SimpleGRU(nn.Module):
         self.gru = nn.GRU(input_size, hidden_size1, batch_first=True, num_layers=2, bidirectional=True)# 双向GRU
         self.fc1 = nn.Linear(hidden_size1, hidden_size2)
         self.fc2 = nn.Linear(hidden_size2, 1)
-    
+        self.BN128 = nn.BatchNorm1d(hidden_size1)
+        self.BN64 = nn.BatchNorm1d(hidden_size2)
+
     def forward(self, packed_input):
         packed_output, hidden = self.gru(packed_input)
         # output = pad_packed_sequence(packed_output, batch_first=True)
         # print(hidden.size()) # torch.Size([4, 32, 128]) 32批次，4个方向，128个隐藏单元
         hidden = F.adaptive_avg_pool1d(hidden.permute(1, 2, 0), 1).squeeze(2)
 
+        hidden = self.BN128(hidden)
         hidden = self.fc1(hidden)
+        hidden = torch.sigmoid(hidden)
         hidden = self.fc2(hidden)
         hidden = torch.sigmoid(hidden)
         
