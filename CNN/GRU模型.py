@@ -23,7 +23,13 @@ class SimpleGRU(nn.Module):
         packed_output, hidden = self.gru(packed_input)
         # output = pad_packed_sequence(packed_output, batch_first=True)
         # print(hidden.size()) # torch.Size([4, 32, 128]) 32批次，4个方向，128个隐藏单元
-        hidden = F.adaptive_avg_pool1d(hidden.permute(1, 2, 0), 1).squeeze(2)
+        # 增加权重对四个输出进行选择
+        weights = torch.nn.Parameter(torch.randn(4), requires_grad=True)
+        attention_weights = F.softmax(weights, dim=0)
+        # 扩展权重维度以便与输入张量相乘
+        attention_weights_expanded = attention_weights.view(4, 1, 1)  # 变成 (4, 1, 1)
+        # 加权相乘并求和得到最终的 (32, 128) 输出
+        hidden = torch.sum(attention_weights_expanded * input, dim=0)  # 加权求和得到 (32, 128)
 
         hidden = self.BN128(hidden)
         hidden = self.fc1(hidden)
