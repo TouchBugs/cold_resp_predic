@@ -12,7 +12,7 @@ print(TheTime)
 # seed = 3407
 # torch.manual_seed(seed)
 # =============================================
-Thetarget = ''
+Thetarget = '冻结GRU排序好的数据'
 # =============================================
 torch.cuda.set_device(0)
 device = torch.device("cuda:0")
@@ -29,7 +29,7 @@ acc_png = root_dir + f'acc-lr{lr}-wd{weight_decay}-ep{epochs}-{TheTime}-{Thetarg
 precision_png = root_dir + f'precision-lr{lr}-wd{weight_decay}-ep{epochs}-{TheTime}-{Thetarget}.png'
 recall_png = root_dir + f'recall-lr{lr}-wd{weight_decay}-ep{epochs}-{TheTime}-{Thetarget}.png'
 f1_png = root_dir + f'f1-lr{lr}-wd{weight_decay}-ep{epochs}-{TheTime}-{Thetarget}.png'
-data_root = '/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/分好的数据集csv/二进制GRU'
+data_root = '/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/分好的数据集csv/二进制GRU/排序好'
 train_data_dir = data_root + '/train/'
 val_data_dir = data_root + '/val/'
 
@@ -41,8 +41,8 @@ print('加载预训练参数')
 gru_weight = torch.load('/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/CNN/gru_weight.pth')
 model.gru.load_state_dict(gru_weight)
 # 冻结 GRU 层的所有权重
-# for param in model.gru.parameters():
-#     param.requires_grad = False
+for param in model.gru.parameters():
+    param.requires_grad = False
 print('预训练参数加载完成')
 
 criterion = torch.nn.BCELoss()
@@ -237,7 +237,7 @@ for epoch in range(epochs):
 
     if val_accs[-1] > best_acc:
         best_acc = val_accs[-1]
-        torch.save(model.state_dict(), root_dir + f'model({epoch}_{epochs}-{best_acc:.4f}-{val_precision}-{val_recall}-{val_f1}-{lr}-{weight_decay}-{TheTime}--{Thetarget}).pth')
+        torch.save(model.state_dict(), root_dir + f'model({epoch}_{epochs}-{best_acc:.4f}-{val_precision:.4f}-{val_recall:.4f}-{val_f1:.4f}-{lr}-{weight_decay}-{TheTime}--{Thetarget}).pth')
 
 
 def plot_metric(train_metric, val_metric, metric_name, y_label, save_path):
