@@ -37,11 +37,13 @@ print('创建模型实例')
 model = SimpleGRU().to(device)
 print('模型实例创建完成')
 # 只对GRU加载预训练参数
+print('加载预训练参数')
 gru_weight = torch.load('/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/CNN/gru_weight.pth')
 model.gru.load_state_dict(gru_weight)
 # 冻结 GRU 层的所有权重
-for param in model.gru.parameters():
-    param.requires_grad = False
+# for param in model.gru.parameters():
+#     param.requires_grad = False
+print('预训练参数加载完成')
 
 criterion = torch.nn.BCELoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay, eps=1e-10)
