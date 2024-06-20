@@ -12,7 +12,7 @@ print(TheTime)
 # seed = 3407
 # torch.manual_seed(seed)
 # =============================================
-Thetarget = '不冻结GRU排序好的数据注意力'
+Thetarget = '冻结GRU排序好的数据注意力'
 # =============================================
 torch.cuda.set_device(0)
 device = torch.device("cuda:0")
@@ -44,15 +44,17 @@ model.gru.load_state_dict(torch.load(root_dir + 'gru_weight.pth'))
 want_save_gru = 0
 if want_save_gru:
     # 加载权重
-    saved_model_path = '/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/CNN/model(1_100-0.8000-0.8003-0.7868-0.7888-0.001-1e-05-2024-06-19-19:07:02--不冻结GRU排序好的数据).pth'
+    saved_model_path = '/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/CNN/model(1_100-0.8012-0.8157-0.7710-0.7877-0.001-1e-05-2024-06-20-12:04:04--不冻结GRU排序好的数据注意力).pth'
     saved_state_dict = torch.load(saved_model_path)
     # 保存 GRU 的参数
     model.load_state_dict(saved_state_dict)
     torch.save(model.gru.state_dict(), root_dir + 'gru_weight.pth')
     exit()
-# # 冻结 GRU 层的所有权重
-# for param in model.gru.parameters():
-#     param.requires_grad = False
+# 是否冻结 GRU 层的所有权重: 1冻结，0不冻结
+freeze_GRU = 1
+if freeze_GRU:
+    for param in model.gru.parameters():
+        param.requires_grad = False
 print('预训练参数加载完成')
 
 criterion = torch.nn.BCELoss()
