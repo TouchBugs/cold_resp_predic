@@ -11,12 +11,12 @@ from torch.nn.utils.rnn import pad_sequence, pack_padded_sequence, pad_packed_se
 bcolors = bcolors
 
 class SimpleGRU(nn.Module):
-    def __init__(self, input_size=5, hidden_size1=128, hidden_size2=64):
+    def __init__(self, input_size=5, hidden_size1=256, hidden_size2=128):
         super(SimpleGRU, self).__init__()
         self.gru = nn.GRU(input_size, hidden_size1, batch_first=True, num_layers=2, bidirectional=True)# 双向GRU
         self.fc1 = nn.Linear(hidden_size1, hidden_size2)
-        self.fc2 = nn.Linear(hidden_size2, hidden_size2//2)
-        self.fc3 = nn.Linear(hidden_size2//2, 1)
+        self.fc2 = nn.Linear(hidden_size2, 1)
+        # self.fc3 = nn.Linear(hidden_size2//2, 1)
         self.BN128 = nn.BatchNorm1d(hidden_size1)
         self.BN64 = nn.BatchNorm1d(hidden_size2)
         self.BN32 = nn.BatchNorm1d(32)
@@ -33,8 +33,7 @@ class SimpleGRU(nn.Module):
         hidden = torch.sigmoid(hidden)
         hidden = self.fc2(hidden)
         hidden = torch.sigmoid(hidden)
-        hidden = self.fc3(hidden)
-        hidden = torch.sigmoid(hidden) #增加一层全连接，看看效果如何
+
 
         
         return hidden

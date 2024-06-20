@@ -18,7 +18,7 @@ torch.cuda.set_device(0)
 device = torch.device("cuda:0")
 # device = torch.device("cpu")
 
-lr = 0.001
+lr = 0.005
 weight_decay = 1e-5
 epochs = 100
 
