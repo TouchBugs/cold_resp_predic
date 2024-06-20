@@ -15,7 +15,7 @@ class SimpleGRU(nn.Module):
         super(SimpleGRU, self).__init__()
         self.gru = nn.GRU(input_size, hidden_size1, batch_first=True, num_layers=2, bidirectional=True)# 双向GRU
         self.fc1 = nn.Linear(hidden_size1, hidden_size2)
-        self.fc2 = nn.Linear(hidden_size2, 1)
+        self.fc2 = nn.Linear(hidden_size1, 1)
         # self.fc3 = nn.Linear(hidden_size2//2, 1)
         self.BN128 = nn.BatchNorm1d(hidden_size1)
         self.BN64 = nn.BatchNorm1d(hidden_size2)
@@ -29,10 +29,8 @@ class SimpleGRU(nn.Module):
         hidden = F.adaptive_avg_pool1d(hidden.permute(1, 2, 0), 1).squeeze(2)
 
         hidden = self.BN128(hidden)
-        hidden = self.fc1(hidden)
-        hidden = torch.sigmoid(hidden)
         hidden = self.fc2(hidden)
-        hidden = torch.sigmoid(hidden)
+        hidden = torch.sigmoid(hidden) # 试一下直接把256维的输出映射到1维
 
 
         

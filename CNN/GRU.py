@@ -1,5 +1,7 @@
 import pickle
 import re
+
+import yaml
 from GRU模型 import bcolors, SimpleGRU
 import torch
 import time
@@ -37,9 +39,9 @@ print('创建模型实例')
 model = SimpleGRU().to(device)
 print('模型实例创建完成')
 
-# 只对GRU加载预训练参数
-print('加载预训练参数')
-model.gru.load_state_dict(torch.load(root_dir + 'gru_weight.pth'))
+# # 只对GRU加载预训练参数
+# print('加载预训练参数')
+# model.gru.load_state_dict(torch.load(root_dir + 'gru_weight.pth'))
 
 want_save_gru = 0
 if want_save_gru:
@@ -51,7 +53,7 @@ if want_save_gru:
     torch.save(model.gru.state_dict(), root_dir + 'gru_weight.pth')
     exit()
 # 是否冻结 GRU 层的所有权重: 1冻结，0不冻结
-freeze_GRU = 1
+freeze_GRU = 0
 if freeze_GRU:
     for param in model.gru.parameters():
         param.requires_grad = False
@@ -266,3 +268,17 @@ plot_metric(train_accs, val_accs, 'accuracy', 'accuracy', acc_png)
 plot_metric(train_precisions, val_precisions, 'precision', 'precision', precision_png)
 plot_metric(train_recalls, val_recalls, 'recall', 'recall', recall_png)
 plot_metric(train_f1s, val_f1s, 'f1', 'F1-score', f1_png)
+
+
+import yagmail
+
+def send_email(subject, body):
+    # 1439389719
+    qq = 2196692208
+    if len(str(qq))!=10:
+        raise ValueError('qq号码长度不对')
+    receiver = str(qq) +'@qq.com'  # 接收方邮箱
+    yag = yagmail.SMTP(user='2196692208@qq.com', host='smtp.qq.com', port=465, smtp_ssl=True) 
+    yag.send(to=receiver, subject=subject, contents=[body, yagmail.inline(loss_png), yagmail.inline(acc_png), yagmail.inline(precision_png), yagmail.inline(recall_png), yagmail.inline(f1_png)])
+    print('send email successfully')
+send_email('程序跑完了', '模型训练完了.\n' + TheTime)
