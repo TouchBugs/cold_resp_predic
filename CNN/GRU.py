@@ -39,21 +39,21 @@ print('创建模型实例')
 model = SimpleGRU().to(device)
 print('模型实例创建完成')
 
-# # 只对GRU加载预训练参数
-# print('加载预训练参数')
-# model.gru.load_state_dict(torch.load(root_dir + 'gru_weight.pth'))
+# 只对GRU加载预训练参数
+print('加载预训练参数')
+model.gru.load_state_dict(torch.load(root_dir + 'gru_weight.pth'))
 
 want_save_gru = 0
 if want_save_gru:
     # 加载权重
-    saved_model_path = '/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/CNN/model(1_100-0.8012-0.8157-0.7710-0.7877-0.001-1e-05-2024-06-20-12:04:04--不冻结GRU排序好的数据注意力).pth'
+    saved_model_path = '/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/CNN/model(21_100-0.7953-0.8162-0.7483-0.7743-0.005-1e-05-2024-06-20-17:27:08--冻结GRU排序好的数据注意力).pth'
     saved_state_dict = torch.load(saved_model_path)
     # 保存 GRU 的参数
     model.load_state_dict(saved_state_dict)
     torch.save(model.gru.state_dict(), root_dir + 'gru_weight.pth')
     exit()
 # 是否冻结 GRU 层的所有权重: 1冻结，0不冻结
-freeze_GRU = 0
+freeze_GRU = 1
 if freeze_GRU:
     for param in model.gru.parameters():
         param.requires_grad = False
