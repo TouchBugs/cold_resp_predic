@@ -15,28 +15,27 @@ class SimpleGRU(nn.Module):
         super(SimpleGRU, self).__init__()
         self.gru = nn.GRU(input_size, hidden_size1, batch_first=True, num_layers=2, bidirectional=True)# 双向GRU
         self.fc1 = nn.Linear(hidden_size1, hidden_size2)
-        self.fc2 = nn.Linear(hidden_size2, 1)
+        self.fc2 = nn.Linear(hidden_size2, hidden_size2//2)
+        self.fc3 = nn.Linear(hidden_size2//2, 1)
         self.BN128 = nn.BatchNorm1d(hidden_size1)
         self.BN64 = nn.BatchNorm1d(hidden_size2)
+        self.BN32 = nn.BatchNorm1d(32)
 
     def forward(self, packed_input):
-        device = torch.device("cuda:0")
         packed_output, hidden = self.gru(packed_input)
         # output = pad_packed_sequence(packed_output, batch_first=True)
         # print(hidden.size()) # torch.Size([4, 32, 128]) 32批次，4个方向，128个隐藏单元
-        # 增加权重对四个输出进行选择
-        weights = torch.nn.Parameter(torch.randn(4), requires_grad=True).to(device)
-        attention_weights = F.softmax(weights, dim=0)
-        # 扩展权重维度以便与输入张量相乘
-        attention_weights_expanded = attention_weights.view(4, 1, 1)  # 变成 (4, 1, 1)
-        # 加权相乘并求和得到最终的 (32, 128) 输出
-        hidden = torch.sum(attention_weights_expanded * hidden, dim=0)  # 加权求和得到 (32, 128)
+        # 此处增加注意力机制会使得效果不好
+        hidden = F.adaptive_avg_pool1d(hidden.permute(1, 2, 0), 1).squeeze(2)
 
         hidden = self.BN128(hidden)
         hidden = self.fc1(hidden)
         hidden = torch.sigmoid(hidden)
         hidden = self.fc2(hidden)
         hidden = torch.sigmoid(hidden)
+        hidden = self.fc3(hidden)
+        hidden = torch.sigmoid(hidden) #增加一层全连接，看看效果如何
+
         
         return hidden
 
