@@ -18,9 +18,6 @@ class SimpleGRU(nn.Module):
         self.fc2 = nn.Linear(hidden_size2, hidden_size3)
         self.fc3 = nn.Linear(hidden_size3, output_size)
 
-        #残差连接
-        self.cc = nn.Linear(hidden_size1, hidden_size3)
-
         self.BN1 = nn.BatchNorm1d(hidden_size1)
         self.BN2 = nn.BatchNorm1d(hidden_size2)
         self.BN3 = nn.BatchNorm1d(hidden_size3)
@@ -37,10 +34,7 @@ class SimpleGRU(nn.Module):
         hidden = self.BN2(hidden)  # 批量归一化层
         hidden = torch.relu(hidden)  # 将ReLU激活函数放在批量归一化之后
         hidden = self.fc2(hidden)
-        cc = self.cc(hidden_0)
-        # 把cc和hidden相加再求平均
-        # print(cc.shape, hidden.shape)
-        hidden = (hidden + cc) / 2 # 形状为[32, 64] 残差连接
+
         # print(hidden.shape)
         hidden = torch.relu(hidden)
         hidden = self.BN3(hidden)  # 批量归一化层
