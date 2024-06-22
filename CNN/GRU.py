@@ -17,7 +17,7 @@ print(TheTime)
 # seed = 3407
 # torch.manual_seed(seed)
 # =============================================
-Thetarget = '不冻排序残差'
+Thetarget = '不冻排序残差阈值0.4'
 print(Thetarget)
 # =============================================
 torch.cuda.set_device(0)
