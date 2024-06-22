@@ -1,6 +1,9 @@
+import csv
 import pickle
 import re
 
+from ipykernel import write_connection_file
+from requests import get
 import yaml
 from GRU模型 import bcolors, SimpleGRU
 import torch
@@ -14,7 +17,8 @@ print(TheTime)
 # seed = 3407
 # torch.manual_seed(seed)
 # =============================================
-Thetarget = '冻结GRU排序好的数据注意力'
+Thetarget = '不冻排序残差'
+print(Thetarget)
 # =============================================
 torch.cuda.set_device(0)
 device = torch.device("cuda:0")
@@ -46,14 +50,14 @@ model.gru.load_state_dict(torch.load(root_dir + 'gru_weight.pth'))
 want_save_gru = 0
 if want_save_gru:
     # 加载权重
-    saved_model_path = '/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/CNN/model(21_100-0.7953-0.8162-0.7483-0.7743-0.005-1e-05-2024-06-20-17:27:08--冻结GRU排序好的数据注意力).pth'
+    saved_model_path = '/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/CNN/model(4_100-0.8081-0.8230-0.7807-0.7952-0.005-1e-05-2024-06-21-17:04:09--不冻结GRU排序好的数据注意力).pth'
     saved_state_dict = torch.load(saved_model_path)
     # 保存 GRU 的参数
     model.load_state_dict(saved_state_dict)
     torch.save(model.gru.state_dict(), root_dir + 'gru_weight.pth')
     exit()
 # 是否冻结 GRU 层的所有权重: 1冻结，0不冻结
-freeze_GRU = 1
+freeze_GRU = 0 # 冻结的效果更好
 if freeze_GRU:
     for param in model.gru.parameters():
         param.requires_grad = False
@@ -72,6 +76,25 @@ val_precisions = []
 val_recalls = []
 val_f1s = []
 
+#定义一个字典，记录不正确序列的批次i以及其在output中的位置，及其错误次数{(i, locat): count}
+wrong_sequence = {}
+
+def get_wrong_sequence(outputs, labels, i):
+    # print(outputs.shape) # ([32, 1])
+    # print(labels.shape)
+    outputs = outputs.squeeze(1)
+    labels = labels.squeeze(1)
+
+    for j in range(outputs.shape[0]):
+        if (outputs[j] < 0.4 and labels[j] == 1) or (outputs[j] >= 0.4 and labels[j] == 0):
+            if (i, j) in wrong_sequence:
+                wrong_sequence[(i, j)] += 1
+            else:
+                wrong_sequence[(i, j)] = 1
+    # 打印出wrong_sequence的最后一个元素
+    print(list(wrong_sequence.items())[-1])
+
+
 def preprocess(num1s, num0s, f):
     batch = pickle.load(f)
     sequence = batch[0]
@@ -81,11 +104,11 @@ def preprocess(num1s, num0s, f):
     num1s += (label == 1).sum().item()
     num0s += (label == 0).sum().item()
 
-    
+
     return sequence, label, num1s, num0s
 
 def calculate_metrics(outputs, labels):
-    predicted = torch.where(outputs >= 0.5, torch.tensor(1.0, dtype=torch.float32).to(device), torch.tensor(0.0, dtype=torch.float32).to(device))
+    predicted = torch.where(outputs >= 0.4, torch.tensor(1.0, dtype=torch.float32).to(device), torch.tensor(0.0, dtype=torch.float32).to(device))
 
     true_positive = ((predicted == 1) & (labels == 1)).sum().item()
     false_positive = ((predicted == 1) & (labels == 0)).sum().item()
@@ -166,7 +189,7 @@ for epoch in range(epochs):
             # print(loss)
             epoch_loss += loss.item()
 
-            outputs10 = torch.where(outputs >= 0.5, torch.tensor(1.0, dtype=torch.float32).to(device), torch.tensor(0.0, dtype=torch.float32).to(device))
+            outputs10 = torch.where(outputs >= 0.4, torch.tensor(1.0, dtype=torch.float32).to(device), torch.tensor(0.0, dtype=torch.float32).to(device))
             right_num += (outputs10 == permuted_label).sum().item()
 
             loss.backward()
@@ -210,10 +233,13 @@ for epoch in range(epochs):
                 loss = criterion(outputs, permuted_label)
                 val_loss += loss.item()
 
-                outputs10 = torch.where(outputs >= 0.5, torch.tensor(1.0, dtype=torch.float32).to(device), torch.tensor(0.0, dtype=torch.float32).to(device))
+                outputs10 = torch.where(outputs >= 0.4, torch.tensor(1.0, dtype=torch.float32).to(device), torch.tensor(0.0, dtype=torch.float32).to(device))
                 right_num += (outputs10 == permuted_label).sum().item()
 
                 precision, recall, f1 = calculate_metrics(outputs, permuted_label)
+                # 写一个函数记录不正确的序列
+                get_wrong_sequence(outputs, permuted_label, i)
+
                 val_precision += precision
                 val_recall += recall
                 val_f1 += f1
@@ -270,6 +296,26 @@ plot_metric(train_recalls, val_recalls, 'recall', 'recall', recall_png)
 plot_metric(train_f1s, val_f1s, 'f1', 'F1-score', f1_png)
 
 
+# 把wrong_sequence按照count大小排序,大的在前面
+wrong_sequence = dict(sorted(wrong_sequence.items(), key=lambda x: x[1], reverse=True))
+# 把wrong_sequence（{[i, locat]: count}）写入文件csv，格式为：第i批第locat个, count
+with open(root_dir + 'wrong_sequence.csv', 'w', newline='') as f:
+    writer = csv.writer(f)
+    writer.writerow(['i', 'locat', 'count'])
+    for key, value in wrong_sequence.items():
+        writer.writerow([key[0], key[1], value])
+# 取出csv前五条数据, 格式为：第{i}批第{locat}个, {count}
+with open(root_dir + 'wrong_sequence.csv', 'r') as f:
+    reader = csv.reader(f)
+    mail = ''
+    for i, row in enumerate(reader):
+        if i == 0:
+            continue
+        if i > 5:
+            break
+        print(f'第{row[0]}批第{row[1]}个, {row[2]}')
+        mail += f'第{row[0]}批第{row[1]}个, {row[2]}\n'
+
 import yagmail
 
 def send_email(subject, body):
@@ -281,4 +327,4 @@ def send_email(subject, body):
     yag = yagmail.SMTP(user='2196692208@qq.com', host='smtp.qq.com', port=465, smtp_ssl=True) 
     yag.send(to=receiver, subject=subject, contents=[body, yagmail.inline(loss_png), yagmail.inline(acc_png), yagmail.inline(precision_png), yagmail.inline(recall_png), yagmail.inline(f1_png)])
     print('send email successfully')
-send_email('程序跑完了', '模型训练完了.\n' + TheTime)
+send_email('程序跑完了', '模型训练完了.\n' + TheTime + '\n' + Thetarget + mail)
