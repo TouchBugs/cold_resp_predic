@@ -37,17 +37,14 @@ class SimpleGRU(nn.Module):
         hidden = self.BN2(hidden)  # 批量归一化层
         hidden = torch.relu(hidden)  # 将ReLU激活函数放在批量归一化之后
         hidden = self.fc2(hidden)
-
         cc = self.cc(hidden_0)
-        # 直接使用残差连接
-        hidden = hidden + cc  # 确保hidden和cc的维度匹配
-
-
+        # 把cc和hidden相加再求平均
+        # print(cc.shape, hidden.shape)
+        hidden = (hidden + cc) / 2 # 形状为[32, 64] 残差连接
         # print(hidden.shape)
+        hidden = torch.relu(hidden)
         hidden = self.BN3(hidden)  # 批量归一化层
-        hidden = torch.relu(hidden)  # 将ReLU激活函数放在批量归一化之后
         hidden = self.fc3(hidden)
-
         hidden = torch.sigmoid(hidden)
         # print(hidden.shape)
         return hidden

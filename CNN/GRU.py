@@ -17,7 +17,8 @@ print(TheTime)
 # seed = 3407
 # torch.manual_seed(seed)
 # =============================================
-Thetarget = '不冻排序残差阈值0.4'
+threathhold = 0.4
+Thetarget = f'冻排序残差阈值{threathhold}'
 print(Thetarget)
 # =============================================
 torch.cuda.set_device(0)
@@ -57,7 +58,7 @@ if want_save_gru:
     torch.save(model.gru.state_dict(), root_dir + 'gru_weight.pth')
     exit()
 # 是否冻结 GRU 层的所有权重: 1冻结，0不冻结
-freeze_GRU = 0 # 冻结的效果更好
+freeze_GRU = 1 # 冻结的效果更好
 if freeze_GRU:
     for param in model.gru.parameters():
         param.requires_grad = False
@@ -86,13 +87,13 @@ def get_wrong_sequence(outputs, labels, i):
     labels = labels.squeeze(1)
 
     for j in range(outputs.shape[0]):
-        if (outputs[j] < 0.4 and labels[j] == 1) or (outputs[j] >= 0.4 and labels[j] == 0):
+        if (outputs[j] < threathhold and labels[j] == 1) or (outputs[j] >= threathhold and labels[j] == 0):
             if (i, j) in wrong_sequence:
                 wrong_sequence[(i, j)] += 1
             else:
                 wrong_sequence[(i, j)] = 1
     # 打印出wrong_sequence的最后一个元素
-    print(list(wrong_sequence.items())[-1])
+    # print(list(wrong_sequence.items())[-1])
 
 
 def preprocess(num1s, num0s, f):
@@ -108,7 +109,7 @@ def preprocess(num1s, num0s, f):
     return sequence, label, num1s, num0s
 
 def calculate_metrics(outputs, labels):
-    predicted = torch.where(outputs >= 0.4, torch.tensor(1.0, dtype=torch.float32).to(device), torch.tensor(0.0, dtype=torch.float32).to(device))
+    predicted = torch.where(outputs >= threathhold, torch.tensor(1.0, dtype=torch.float32).to(device), torch.tensor(0.0, dtype=torch.float32).to(device))
 
     true_positive = ((predicted == 1) & (labels == 1)).sum().item()
     false_positive = ((predicted == 1) & (labels == 0)).sum().item()
@@ -189,7 +190,7 @@ for epoch in range(epochs):
             # print(loss)
             epoch_loss += loss.item()
 
-            outputs10 = torch.where(outputs >= 0.4, torch.tensor(1.0, dtype=torch.float32).to(device), torch.tensor(0.0, dtype=torch.float32).to(device))
+            outputs10 = torch.where(outputs >= threathhold, torch.tensor(1.0, dtype=torch.float32).to(device), torch.tensor(0.0, dtype=torch.float32).to(device))
             right_num += (outputs10 == permuted_label).sum().item()
 
             loss.backward()
@@ -233,7 +234,7 @@ for epoch in range(epochs):
                 loss = criterion(outputs, permuted_label)
                 val_loss += loss.item()
 
-                outputs10 = torch.where(outputs >= 0.4, torch.tensor(1.0, dtype=torch.float32).to(device), torch.tensor(0.0, dtype=torch.float32).to(device))
+                outputs10 = torch.where(outputs >= threathhold, torch.tensor(1.0, dtype=torch.float32).to(device), torch.tensor(0.0, dtype=torch.float32).to(device))
                 right_num += (outputs10 == permuted_label).sum().item()
 
                 precision, recall, f1 = calculate_metrics(outputs, permuted_label)
