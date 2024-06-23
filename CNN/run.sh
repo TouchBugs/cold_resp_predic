@@ -53,7 +53,7 @@ for lr in "${lrs[@]}"; do
           for hidden_size3 in "${hidden_size3s[@]}"; do
             log "Running with lr=$lr, weight_decay=$weight_decay, freeze_GRU=$freeze_GRU, threathhold=$threathhold, hidden_size2=$hidden_size2, hidden_size3=$hidden_size3"
             
-            nohup /Data4/gly_wkdir/environment/DeepLpy3.9/bin/python /Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/CNN/ttemp.py \
+            nohup /Data4/gly_wkdir/environment/DeepLpy3.9/bin/python /Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/CNN/GRU.py \
               -lr "$lr" \
               -weight_decay "$weight_decay" \
               -freeze_GRU "$freeze_GRU" \
@@ -67,7 +67,7 @@ for lr in "${lrs[@]}"; do
             log "Started process with PID $pid"
 
             # 等待任务完成
-            wait $pid
+            wait "$pid"
             if [ $? -eq 0 ]; then
                 log "Process $pid completed successfully."
             else

@@ -378,7 +378,9 @@ with open(root_dir + 'wrong_sequence.csv', 'r') as f:
         mail += f'第{row[0]}批第{row[1]}个, {row[2]}\n'
 
 import yagmail
-
+# 把超参数都写入邮件
+mail += '\n'
+mail += f'lr: {lr}\nweight_decay: {weight_decay}\nfreeze_GRU: {freeze_GRU}\nthreathhold: {threathhold}\nhidden_size2: {hidden_size2}\nhidden_size3: {hidden_size3}\nepoch: {epochs}\n'
 def send_email(subject, body):
     # 1439389719
     qq = 2196692208
