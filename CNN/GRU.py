@@ -1,7 +1,7 @@
 import csv
 import pickle
 import re
-
+import argparse
 from ipykernel import write_connection_file
 from requests import get
 import yaml
@@ -9,24 +9,39 @@ from GRU模型 import bcolors, SimpleGRU
 import torch
 import time
 import matplotlib.pyplot as plt
+# 创建 ArgumentParser 对象
+parser = argparse.ArgumentParser(description='Process some integers.')
 
 TheTime = str(time.strftime("%Y-%m-%d-%H:%M:%S", time.localtime()))
 print(TheTime)
 
+
+# 添加参数 -lr 、weight_decay、 freeze_GRU、threathhold和 -epoch
+# 参数分别指的是：学习率、权重衰减、是否冻结GRU层、阈值和训练的轮数
+parser.add_argument('-lr', type=float, default=0.001, help='learning rate')
+parser.add_argument('-weight_decay', type=float, default=1e-4, help='weight decay')
+parser.add_argument('-freeze_GRU', type=int, default=0, help='freeze GRU layer or not')
+parser.add_argument('-threathhold', type=float, default=0.4, help='threathhold')
+parser.add_argument('-epoch', type=int, default=100, help='number of epochs')
+
+# 解析参数
+args = parser.parse_args()
+# 使用参数
+print(f"Learning Rate: {args.lr}")
+print(f"Epochs: {args.epoch}")
 # 设置随机种子
 # seed = 3407
 # torch.manual_seed(seed)
+# 是否冻结 GRU 层的所有权重: 1冻结，0不冻结
+freeze_GRU = 0 # 冻结的效果更好
 # =============================================
 threathhold = 0.4
-Thetarget = f'冻排序残差阈值{threathhold}'
+Thetarget = f'{freeze_GRU}排序128-{threathhold}'
 print(Thetarget)
 # =============================================
-torch.cuda.set_device(0)
-device = torch.device("cuda:0")
-# device = torch.device("cpu")
-
+# 超参数
 lr = 0.005
-weight_decay = 1e-5
+weight_decay = 1e-4
 epochs = 100
 
 best_acc = 0.7
@@ -36,17 +51,21 @@ acc_png = root_dir + f'acc-lr{lr}-wd{weight_decay}-ep{epochs}-{TheTime}-{Thetarg
 precision_png = root_dir + f'precision-lr{lr}-wd{weight_decay}-ep{epochs}-{TheTime}-{Thetarget}.png'
 recall_png = root_dir + f'recall-lr{lr}-wd{weight_decay}-ep{epochs}-{TheTime}-{Thetarget}.png'
 f1_png = root_dir + f'f1-lr{lr}-wd{weight_decay}-ep{epochs}-{TheTime}-{Thetarget}.png'
+roc_png = root_dir + f'roc-lr{lr}-wd{weight_decay}-ep{epochs}-{TheTime}-{Thetarget}.png'
 data_root = '/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/分好的数据集csv/二进制GRU/排序好'
 train_data_dir = data_root + '/train/'
 val_data_dir = data_root + '/val/'
 
+torch.cuda.set_device(0)
+device = torch.device("cuda:0")
+# device = torch.device("cpu")
 print('创建模型实例')
 model = SimpleGRU().to(device)
 print('模型实例创建完成')
 
 # 只对GRU加载预训练参数
 print('加载预训练参数')
-model.gru.load_state_dict(torch.load(root_dir + 'gru_weight.pth'))
+model.gru.load_state_dict(torch.load("/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/CNN/128GRU/gru_weight.pth"))
 
 want_save_gru = 0
 if want_save_gru:
@@ -57,8 +76,7 @@ if want_save_gru:
     model.load_state_dict(saved_state_dict)
     torch.save(model.gru.state_dict(), root_dir + 'gru_weight.pth')
     exit()
-# 是否冻结 GRU 层的所有权重: 1冻结，0不冻结
-freeze_GRU = 1 # 冻结的效果更好
+
 if freeze_GRU:
     for param in model.gru.parameters():
         param.requires_grad = False
@@ -76,6 +94,29 @@ train_f1s = []
 val_precisions = []
 val_recalls = []
 val_f1s = []
+train_rocs = []
+val_rocs = []
+
+from sklearn.metrics import roc_curve, auc
+import numpy as np
+
+def compute_roc(outputs, labels):
+    """
+    计算ROC曲线的数据。
+    :param outputs: 模型的输出，形状为[N, 1]，其中N是样本数量。
+    :param labels: 真实标签，形状与outputs相同。
+    :return: 返回FPR, TPR和对应的AUC值。
+    """
+    # 将输出和标签转换为一维numpy数组
+    outputs = outputs.squeeze().detach().cpu().numpy()
+    labels = labels.squeeze().detach().cpu().numpy()
+    
+    # 计算FPR, TPR和阈值
+    fpr, tpr, thresholds = roc_curve(labels, outputs)
+    # 计算AUC
+    roc_auc = auc(fpr, tpr)
+    
+    return fpr, tpr, roc_auc
 
 #定义一个字典，记录不正确序列的批次i以及其在output中的位置，及其错误次数{(i, locat): count}
 wrong_sequence = {}
@@ -121,7 +162,7 @@ def calculate_metrics(outputs, labels):
 
     return precision, recall, f1
 
-def record_results(epoch, epoch_loss, right_num, num1s, num0s, outputs, metrics, train=True):
+def record_results(epoch, epoch_loss, right_num, num1s, num0s, outputs, metrics, roc, train=True):
     accuracy = right_num / (num1s + num0s)
     precision, recall, f1 = metrics
     if train:
@@ -130,6 +171,7 @@ def record_results(epoch, epoch_loss, right_num, num1s, num0s, outputs, metrics,
         train_precisions.append(precision)
         train_recalls.append(recall)
         train_f1s.append(f1)
+        train_rocs.append(roc)
         print(f'Epoch [{epoch+1}/{epochs}], Loss: {epoch_loss:.4f}')
         print(f'train_Accuracy: {bcolors.RED}{accuracy:.4f}{bcolors.WHITE}')
         print(f'train_Precision: {bcolors.UNDERLINE_Blue}{precision:.4f}{bcolors.WHITE}, \
@@ -140,12 +182,14 @@ def record_results(epoch, epoch_loss, right_num, num1s, num0s, outputs, metrics,
         print('总数: ', num1s + num0s)
         print('正确的个数: ', right_num)
         print('最后一个批次的输出, 不满batchsize是正常的:\n', outputs)
+        print(f'Epoch [{epoch+1}/{epochs}], T_AUC: {bcolors.UNDERLINE}{roc:.4f}{bcolors.WHITE}')
     else:
         val_losses.append(epoch_loss)
         val_accs.append(accuracy)
         val_precisions.append(precision)
         val_recalls.append(recall)
         val_f1s.append(f1)
+        val_rocs.append(roc)
         print(f'Epoch [{epoch+1}/{epochs}], Loss: {epoch_loss:.4f}')
         print(f'val_Accuracy: {bcolors.GREEN}{accuracy:.4f}{bcolors.WHITE}')
         print(f'val_Precision: {bcolors.UNDERLINE_Blue}{precision:.4f}{bcolors.WHITE}, \
@@ -155,6 +199,7 @@ def record_results(epoch, epoch_loss, right_num, num1s, num0s, outputs, metrics,
         print('标签里0的个数: ', num0s)
         print('总数: ', num1s + num0s)
         print('正确的个数: ', right_num)
+        print(f'Epoch [{epoch+1}/{epochs}], V_AUC: {bcolors.UNDERLINE}{roc:.4f}{bcolors.WHITE}')
 
 # 记录最近4个epoch的训练损失
 recent_train_losses = []
@@ -174,6 +219,7 @@ for epoch in range(epochs):
     train_precision = 0
     train_recall = 0
     train_f1 = 0
+    trian_roc = 0
 
     for i in range(135):
         with open(train_data_dir + 'train_batch_' + str(i) + '.pkl', 'rb') as f:
@@ -201,12 +247,15 @@ for epoch in range(epochs):
             train_precision += precision
             train_recall += recall
             train_f1 += f1
+            fpr, tpr, roc_auc = compute_roc(outputs10, permuted_label)
+            trian_roc += roc_auc
 
     train_precision /= 135
     train_recall /= 135
     train_f1 /= 135
+    trian_roc /= 135
 
-    record_results(epoch, epoch_loss, right_num, num1s, num0s, outputs, (train_precision, train_recall, train_f1), train=True)
+    record_results(epoch, epoch_loss, right_num, num1s, num0s, outputs, (train_precision, train_recall, train_f1), trian_roc, train=True)
     recent_train_losses.append(epoch_loss)
     recent_train_accs.append(right_num / (num1s + num0s))
 
@@ -218,6 +267,7 @@ for epoch in range(epochs):
     val_precision = 0
     val_recall = 0
     val_f1 = 0
+    val_roc = 0
 
     with torch.no_grad():
         for i in range(27):
@@ -241,18 +291,23 @@ for epoch in range(epochs):
                 # 写一个函数记录不正确的序列
                 get_wrong_sequence(outputs, permuted_label, i)
 
+                # 在验证阶段计算ROC
+                fpr, tpr, roc_auc = compute_roc(outputs10, permuted_label)
+                
                 val_precision += precision
                 val_recall += recall
                 val_f1 += f1
+                val_roc += roc_auc
 
     val_precision /= 27
     val_recall /= 27
     val_f1 /= 27
+    val_roc /= 27
 
-    record_results(epoch, val_loss, right_num, num1s, num0s, outputs, (val_precision, val_recall, val_f1), train=False)
+    record_results(epoch, val_loss, right_num, num1s, num0s, outputs, (val_precision, val_recall, val_f1), val_roc, train=False)
     recent_val_losses.append(val_loss)
     recent_val_accs.append(right_num / (num1s + num0s))
-
+    
     # # 增大和减小学习率的判断
     # if len(recent_train_losses) > 4 and len(recent_val_losses) > 4 and len(recent_val_accs) > 4:
     #     recent_train_losses.pop(0)
@@ -295,7 +350,7 @@ plot_metric(train_accs, val_accs, 'accuracy', 'accuracy', acc_png)
 plot_metric(train_precisions, val_precisions, 'precision', 'precision', precision_png)
 plot_metric(train_recalls, val_recalls, 'recall', 'recall', recall_png)
 plot_metric(train_f1s, val_f1s, 'f1', 'F1-score', f1_png)
-
+plot_metric(train_rocs, val_rocs, 'roc', 'AUC', roc_png)
 
 # 把wrong_sequence按照count大小排序,大的在前面
 wrong_sequence = dict(sorted(wrong_sequence.items(), key=lambda x: x[1], reverse=True))
@@ -326,6 +381,6 @@ def send_email(subject, body):
         raise ValueError('qq号码长度不对')
     receiver = str(qq) +'@qq.com'  # 接收方邮箱
     yag = yagmail.SMTP(user='2196692208@qq.com', host='smtp.qq.com', port=465, smtp_ssl=True) 
-    yag.send(to=receiver, subject=subject, contents=[body, yagmail.inline(loss_png), yagmail.inline(acc_png), yagmail.inline(precision_png), yagmail.inline(recall_png), yagmail.inline(f1_png)])
+    yag.send(to=receiver, subject=subject, contents=[body, yagmail.inline(loss_png), yagmail.inline(acc_png), yagmail.inline(precision_png), yagmail.inline(recall_png), yagmail.inline(f1_png), yagmail.inline(roc_png)])
     print('send email successfully')
 send_email('程序跑完了', '模型训练完了.\n' + TheTime + '\n' + Thetarget + mail)

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # 设置需要监控的进程ID
-TARGET_PID=687861
+TARGET_PID=151278
 
 # 设置待启动的命令
 CMD="nohup /Data4/gly_wkdir/environment/DeepLpy3.9/bin/python /Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/CNN/GRU.py > nohup.out 2>&1 &"
@@ -14,6 +14,7 @@ is_process_running() {
 # 主监控逻辑
 while is_process_running; do
     # 进程仍在运行，等待60秒后再次检查
+    echo "runing"
     sleep 60
 done
 
