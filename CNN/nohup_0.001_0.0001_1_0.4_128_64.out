@@ -1,0 +1,11 @@
+freeze_GRU: 1
+lr: 0.001
+weight_decay: 0.0001
+epochs: 100
+hidden_size2: 128
+hidden_size3: 64
+threathhold: 0.4
+Traceback (most recent call last):
+  File "/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/CNN/ttemp.py", line 41, in <module>
+    from deap import base, creator, tools, algorithms
+ModuleNotFoundError: No module named 'deap'

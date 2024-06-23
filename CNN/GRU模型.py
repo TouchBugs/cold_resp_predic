@@ -10,7 +10,7 @@ from torch.nn.utils.rnn import pad_sequence, pack_padded_sequence, pad_packed_se
 
 bcolors = bcolors
 
-class SimpleGRU(nn.Module):
+class SimpleGRU(nn.Module): # 128->128->64->1
     def __init__(self, input_size=5, hidden_size1=128, hidden_size2=128, hidden_size3=64, hidden_size4=32, output_size=1):
         super(SimpleGRU, self).__init__()
         self.gru = nn.GRU(input_size, hidden_size1, batch_first=True, num_layers=2, bidirectional=True)# 双向GRU

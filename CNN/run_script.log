@@ -1,0 +1,13 @@
+nohup: ignoring input
+2024-06-24 00:32:06 Starting parameter search at Mon Jun 24 12:32:06 AM CST 2024
+2024-06-24 00:32:06 Parameters:
+2024-06-24 00:32:06 lrs: 0.001 0.005
+2024-06-24 00:32:06 weight_decays: 0.0001 0.001
+2024-06-24 00:32:06 freeze_GRUs: 1
+2024-06-24 00:32:06 threathholds: 0.4 0.5
+2024-06-24 00:32:06 hidden_size2s: 128 256
+2024-06-24 00:32:06 hidden_size3s: 64 128
+2024-06-24 00:32:06 Running with lr=0.001, weight_decay=0.0001, freeze_GRU=1, threathhold=0.4, hidden_size2=128, hidden_size3=64
+2024-06-24 00:32:06 Started process with PID 1446370
+Error: command 'wait $pid' failed with exit code 1.
+See run_script.log for more details.

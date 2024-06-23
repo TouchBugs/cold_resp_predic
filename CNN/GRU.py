@@ -1,3 +1,4 @@
+from ast import arg
 import csv
 import pickle
 import re
@@ -16,33 +17,37 @@ TheTime = str(time.strftime("%Y-%m-%d-%H:%M:%S", time.localtime()))
 print(TheTime)
 
 
-# 添加参数 -lr 、weight_decay、 freeze_GRU、threathhold和 -epoch
-# 参数分别指的是：学习率、权重衰减、是否冻结GRU层、阈值和训练的轮数
+# 添加参数 -lr 、weight_decay、 freeze_GRU、threathhold, hidden_size2, hidden_size3和 -epoch
+# 参数分别指的是学习率、权重衰减、是否冻结GRU层、阈值、隐藏层2的大小、隐藏层3的大小和训练的轮数
 parser.add_argument('-lr', type=float, default=0.001, help='learning rate')
 parser.add_argument('-weight_decay', type=float, default=1e-4, help='weight decay')
 parser.add_argument('-freeze_GRU', type=int, default=0, help='freeze GRU layer or not')
 parser.add_argument('-threathhold', type=float, default=0.4, help='threathhold')
+parser.add_argument('-hidden_size2', type=int, default=128, help='hidden size 2: 128->Hidden_size2->Hidden_size3->1')
+parser.add_argument('-hidden_size3', type=int, default=64, help='hidden size 3: 128->Hidden_size2->Hidden_size3->1')
 parser.add_argument('-epoch', type=int, default=100, help='number of epochs')
 
-# 解析参数
-args = parser.parse_args()
-# 使用参数
-print(f"Learning Rate: {args.lr}")
-print(f"Epochs: {args.epoch}")
 # 设置随机种子
 # seed = 3407
 # torch.manual_seed(seed)
-# 是否冻结 GRU 层的所有权重: 1冻结，0不冻结
-freeze_GRU = 0 # 冻结的效果更好
+
+# 超参数
+# 解析参数
+args = parser.parse_args()
 # =============================================
-threathhold = 0.4
+# 是否冻结 GRU 层的所有权重: 1冻结，0不冻结
+freeze_GRU = args.freeze_GRU # 冻结的效果更好
+lr = args.lr
+weight_decay = args.weight_decay
+epochs = args.epoch
+hidden_size2 = args.hidden_size2
+hidden_size3 = args.hidden_size3
+threathhold = args.threathhold
+
+# =============================================
+
 Thetarget = f'{freeze_GRU}排序128-{threathhold}'
 print(Thetarget)
-# =============================================
-# 超参数
-lr = 0.005
-weight_decay = 1e-4
-epochs = 100
 
 best_acc = 0.7
 root_dir = '/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/CNN/'
@@ -60,7 +65,7 @@ torch.cuda.set_device(0)
 device = torch.device("cuda:0")
 # device = torch.device("cpu")
 print('创建模型实例')
-model = SimpleGRU().to(device)
+model = SimpleGRU(hidden_size2=hidden_size2, hidden_size3=hidden_size3).to(device)
 print('模型实例创建完成')
 
 # 只对GRU加载预训练参数
