@@ -19,12 +19,12 @@ print(TheTime)
 
 # 添加参数 -lr 、weight_decay、 freeze_GRU、threathhold, hidden_size2, hidden_size3和 -epoch
 # 参数分别指的是学习率、权重衰减、是否冻结GRU层、阈值、隐藏层2的大小、隐藏层3的大小和训练的轮数
-parser.add_argument('-lr', type=float, default=0.001, help='learning rate')
+parser.add_argument('-lr', type=float, default=0.005, help='learning rate')
 parser.add_argument('-weight_decay', type=float, default=1e-4, help='weight decay')
 parser.add_argument('-freeze_GRU', type=int, default=0, help='freeze GRU layer or not')
 parser.add_argument('-threathhold', type=float, default=0.4, help='threathhold')
-parser.add_argument('-hidden_size2', type=int, default=128, help='hidden size 2: 128->Hidden_size2->Hidden_size3->1')
-parser.add_argument('-hidden_size3', type=int, default=64, help='hidden size 3: 128->Hidden_size2->Hidden_size3->1')
+parser.add_argument('-hidden_size2', type=int, default=256, help='hidden size 2: 128->Hidden_size2->Hidden_size3->1')
+parser.add_argument('-hidden_size3', type=int, default=128, help='hidden size 3: 128->Hidden_size2->Hidden_size3->1')
 parser.add_argument('-epoch', type=int, default=100, help='number of epochs')
 
 # 设置随机种子
@@ -70,12 +70,12 @@ print('模型实例创建完成')
 
 # 只对GRU加载预训练参数
 print('加载预训练参数')
-model.gru.load_state_dict(torch.load("/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/CNN/128GRU/gru_weight.pth"))
+model.gru.load_state_dict(torch.load("/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/CNN/gru_weight.pth"))
 
 want_save_gru = 0
 if want_save_gru:
     # 加载权重
-    saved_model_path = '/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/CNN/model(4_100-0.8081-0.8230-0.7807-0.7952-0.005-1e-05-2024-06-21-17:04:09--不冻结GRU排序好的数据注意力).pth'
+    saved_model_path = '/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/CNN/比较好的权重/model(94_100-0.8070-0.8332-0.7655-0.7935-0.005-0.001-2024-06-25-22:32:45--1排序128-0.4).pth'
     saved_state_dict = torch.load(saved_model_path)
     # 保存 GRU 的参数
     model.load_state_dict(saved_state_dict)
@@ -226,7 +226,7 @@ for epoch in range(epochs):
     train_f1 = 0
     trian_roc = 0
 
-    for i in range(135):
+    for i in range(140, 290):
         with open(train_data_dir + 'train_batch_' + str(i) + '.pkl', 'rb') as f:
             permuted_sequence, permuted_label, num1s, num0s = preprocess(num1s, num0s, f)
             permuted_sequence, permuted_label = permuted_sequence.to(device), permuted_label.to(device)
@@ -255,10 +255,10 @@ for epoch in range(epochs):
             fpr, tpr, roc_auc = compute_roc(outputs10, permuted_label)
             trian_roc += roc_auc
 
-    train_precision /= 135
-    train_recall /= 135
-    train_f1 /= 135
-    trian_roc /= 135
+    train_precision /= 290
+    train_recall /= 290
+    train_f1 /= 290
+    trian_roc /= 290
 
     record_results(epoch, epoch_loss, right_num, num1s, num0s, outputs, (train_precision, train_recall, train_f1), trian_roc, train=True)
     recent_train_losses.append(epoch_loss)
