@@ -3,6 +3,7 @@ import csv
 import pickle
 import re
 import argparse
+from sre_constants import GROUPREF_UNI_IGNORE
 from ipykernel import write_connection_file
 from requests import get
 import yaml
@@ -19,12 +20,12 @@ print(TheTime)
 
 # 添加参数 -lr 、weight_decay、 freeze_GRU、threathhold, hidden_size2, hidden_size3和 -epoch
 # 参数分别指的是学习率、权重衰减、是否冻结GRU层、阈值、隐藏层2的大小、隐藏层3的大小和训练的轮数
-parser.add_argument('-lr', type=float, default=0.005, help='learning rate')
-parser.add_argument('-weight_decay', type=float, default=1e-4, help='weight decay')
+parser.add_argument('-lr', type=float, default=0.001, help='learning rate')
+parser.add_argument('-weight_decay', type=float, default=1e-5, help='weight decay')
 parser.add_argument('-freeze_GRU', type=int, default=0, help='freeze GRU layer or not')
 parser.add_argument('-threathhold', type=float, default=0.4, help='threathhold')
-parser.add_argument('-hidden_size2', type=int, default=256, help='hidden size 2: 128->Hidden_size2->Hidden_size3->1')
-parser.add_argument('-hidden_size3', type=int, default=128, help='hidden size 3: 128->Hidden_size2->Hidden_size3->1')
+parser.add_argument('-hidden_size2', type=int, default=64, help='hidden size 2: 128->Hidden_size2->Hidden_size3->1')
+parser.add_argument('-hidden_size3', type=int, default=32, help='hidden size 3: 128->Hidden_size2->Hidden_size3->1')
 parser.add_argument('-epoch', type=int, default=100, help='number of epochs')
 
 # 设置随机种子
@@ -61,8 +62,10 @@ data_root = '/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/分好的数据�
 train_data_dir = data_root + '/train/'
 val_data_dir = data_root + '/val/'
 
-torch.cuda.set_device(0)
+# device = torch.cuda.set_device(0)
+# 设置GPU
 device = torch.device("cuda:0")
+# device = torch.device()
 # device = torch.device("cpu")
 print('创建模型实例')
 model = SimpleGRU(hidden_size2=hidden_size2, hidden_size3=hidden_size3).to(device)
@@ -70,7 +73,7 @@ print('模型实例创建完成')
 
 # 只对GRU加载预训练参数
 print('加载预训练参数')
-model.gru.load_state_dict(torch.load("/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/CNN/gru_weight.pth"))
+# model.gru.load_state_dict(torch.load("/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/CNN/gru_weight.pth"))
 
 want_save_gru = 0
 if want_save_gru:
@@ -155,7 +158,7 @@ def preprocess(num1s, num0s, f):
     return sequence, label, num1s, num0s
 
 def calculate_metrics(outputs, labels):
-    predicted = torch.where(outputs >= threathhold, torch.tensor(1.0, dtype=torch.float32).to(device), torch.tensor(0.0, dtype=torch.float32).to(device))
+    predicted = torch.where(outputs >= threathhold, torch.tensor(1.0, dtype=torch.float32).cpu(), torch.tensor(0.0, dtype=torch.float32).cpu())
 
     true_positive = ((predicted == 1) & (labels == 1)).sum().item()
     false_positive = ((predicted == 1) & (labels == 0)).sum().item()
@@ -226,7 +229,7 @@ for epoch in range(epochs):
     train_f1 = 0
     trian_roc = 0
 
-    for i in range(140, 290):
+    for i in range(100,290):
         with open(train_data_dir + 'train_batch_' + str(i) + '.pkl', 'rb') as f:
             permuted_sequence, permuted_label, num1s, num0s = preprocess(num1s, num0s, f)
             permuted_sequence, permuted_label = permuted_sequence.to(device), permuted_label.to(device)
@@ -241,24 +244,29 @@ for epoch in range(epochs):
             # print(loss)
             epoch_loss += loss.item()
 
-            outputs10 = torch.where(outputs >= threathhold, torch.tensor(1.0, dtype=torch.float32).to(device), torch.tensor(0.0, dtype=torch.float32).to(device))
+            outputs10 = torch.where(outputs >= threathhold, torch.tensor(1.0, dtype=torch.float32).cpu(), torch.tensor(0.0, dtype=torch.float32).cpu())
             right_num += (outputs10 == permuted_label).sum().item()
-
+            outputs10 = outputs10.cpu()
+            outputs = outputs.cpu()
+            permuted_label = permuted_label.cpu()
             loss.backward()
             optimizer.step()
             optimizer.zero_grad()
 
+            
             precision, recall, f1 = calculate_metrics(outputs, permuted_label)
             train_precision += precision
             train_recall += recall
             train_f1 += f1
             fpr, tpr, roc_auc = compute_roc(outputs10, permuted_label)
             trian_roc += roc_auc
+            # 把没用的内存释放掉，把不用的变量删除
+            del permuted_sequence, permuted_label, outputs, outputs10, loss, precision, recall, f1, fpr, tpr, roc_auc
 
-    train_precision /= 290
-    train_recall /= 290
-    train_f1 /= 290
-    trian_roc /= 290
+    train_precision /= 290-100
+    train_recall /= 290-100
+    train_f1 /= 290-100
+    trian_roc /= 290-100
 
     record_results(epoch, epoch_loss, right_num, num1s, num0s, outputs, (train_precision, train_recall, train_f1), trian_roc, train=True)
     recent_train_losses.append(epoch_loss)
@@ -289,7 +297,10 @@ for epoch in range(epochs):
                 loss = criterion(outputs, permuted_label)
                 val_loss += loss.item()
 
-                outputs10 = torch.where(outputs >= threathhold, torch.tensor(1.0, dtype=torch.float32).to(device), torch.tensor(0.0, dtype=torch.float32).to(device))
+                outputs10 = torch.where(outputs >= threathhold, torch.tensor(1.0, dtype=torch.float32).cpu(), torch.tensor(0.0, dtype=torch.float32).cpu())
+                outputs10 = outputs10.cpu()
+                outputs = outputs.cpu()
+                permuted_label = permuted_label.cpu()
                 right_num += (outputs10 == permuted_label).sum().item()
 
                 precision, recall, f1 = calculate_metrics(outputs, permuted_label)
