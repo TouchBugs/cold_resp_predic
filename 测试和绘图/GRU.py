@@ -65,9 +65,9 @@ val_data_dir = data_root + '/val/'
 
 # device = torch.cuda.set_device(0)
 # 设置GPU
-device = torch.device("cuda:0")
+# device = torch.device("cuda:0")
 # device = torch.device()
-# device = torch.device("cpu")
+device = torch.device("cpu")
 print('创建模型实例')
 model = SimpleGRU(hidden_size2=hidden_size2, hidden_size3=hidden_size3).to(device)
 print('模型实例创建完成')
