@@ -20,12 +20,12 @@ print(TheTime)
 
 # 添加参数 -lr 、weight_decay、 freeze_GRU、threathhold, hidden_size2, hidden_size3和 -epoch
 # 参数分别指的是学习率、权重衰减、是否冻结GRU层、阈值、隐藏层2的大小、隐藏层3的大小和训练的轮数
-parser.add_argument('-lr', type=float, default=0.001, help='learning rate')
+parser.add_argument('-lr', type=float, default=0.003, help='learning rate')
 parser.add_argument('-weight_decay', type=float, default=1e-5, help='weight decay')
 parser.add_argument('-freeze_GRU', type=int, default=0, help='freeze GRU layer or not')
 parser.add_argument('-threathhold', type=float, default=0.4, help='threathhold')
-parser.add_argument('-hidden_size2', type=int, default=64, help='hidden size 2: 128->Hidden_size2->Hidden_size3->1')
-parser.add_argument('-hidden_size3', type=int, default=32, help='hidden size 3: 128->Hidden_size2->Hidden_size3->1')
+parser.add_argument('-hidden_size2', type=int, default=128, help='hidden size 2: 128->Hidden_size2->Hidden_size3->1')
+parser.add_argument('-hidden_size3', type=int, default=64, help='hidden size 3: 128->Hidden_size2->Hidden_size3->1')
 parser.add_argument('-epoch', type=int, default=100, help='number of epochs')
 
 # 设置随机种子
@@ -58,9 +58,9 @@ precision_png = root_dir + f'precision-lr{lr}-wd{weight_decay}-ep{epochs}-{TheTi
 recall_png = root_dir + f'recall-lr{lr}-wd{weight_decay}-ep{epochs}-{TheTime}-{Thetarget}.png'
 f1_png = root_dir + f'f1-lr{lr}-wd{weight_decay}-ep{epochs}-{TheTime}-{Thetarget}.png'
 roc_png = root_dir + f'roc-lr{lr}-wd{weight_decay}-ep{epochs}-{TheTime}-{Thetarget}.png'
-data_root = '/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/分好的数据集csv/二进制GRU/排序好'
-train_data_dir = data_root + '/train/'
-val_data_dir = data_root + '/val/'
+data_root = '/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/分好的数据集csv/二进制GRU/排序好/Gm/'
+train_data_dir = data_root
+val_data_dir = data_root
 
 # device = torch.cuda.set_device(0)
 # 设置GPU
@@ -73,7 +73,7 @@ print('模型实例创建完成')
 
 # 只对GRU加载预训练参数
 print('加载预训练参数')
-# model.gru.load_state_dict(torch.load("/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/CNN/gru_weight.pth"))
+# model.load_state_dict(torch.load("/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/CNN/model(87_100-0.7218-0.9164-0.9592-0.9322-0.001-1e-05-2024-06-30-19:53:07--0排序128-0.4).pth"))
 
 want_save_gru = 0
 if want_save_gru:
@@ -229,8 +229,8 @@ for epoch in range(epochs):
     train_f1 = 0
     trian_roc = 0
 
-    for i in range(100,290):
-        with open(train_data_dir + 'train_batch_' + str(i) + '.pkl', 'rb') as f:
+    for i in range(190):
+        with open(train_data_dir + 'data_batch_' + str(i) + '.pkl', 'rb') as f:
             permuted_sequence, permuted_label, num1s, num0s = preprocess(num1s, num0s, f)
             permuted_sequence, permuted_label = permuted_sequence.to(device), permuted_label.to(device)
 
@@ -261,12 +261,12 @@ for epoch in range(epochs):
             fpr, tpr, roc_auc = compute_roc(outputs10, permuted_label)
             trian_roc += roc_auc
             # 把没用的内存释放掉，把不用的变量删除
-            del permuted_sequence, permuted_label, outputs, outputs10, loss, precision, recall, f1, fpr, tpr, roc_auc
+            #del permuted_sequence, permuted_label, outputs, outputs10, loss, precision, recall, f1, fpr, tpr, roc_auc
 
-    train_precision /= 290-100
-    train_recall /= 290-100
-    train_f1 /= 290-100
-    trian_roc /= 290-100
+    train_precision /= 190
+    train_recall /= 190
+    train_f1 /= 190
+    trian_roc /= 190
 
     record_results(epoch, epoch_loss, right_num, num1s, num0s, outputs, (train_precision, train_recall, train_f1), trian_roc, train=True)
     recent_train_losses.append(epoch_loss)
@@ -283,8 +283,8 @@ for epoch in range(epochs):
     val_roc = 0
 
     with torch.no_grad():
-        for i in range(27):
-            with open(val_data_dir + 'val_batch_' + str(i) + '.pkl', 'rb') as f:
+        for i in range(190,224):
+            with open(val_data_dir + 'data_batch_' + str(i) + '.pkl', 'rb') as f:
                 permuted_sequence, permuted_label, num1s, num0s = preprocess(num1s, num0s, f)
                 permuted_sequence, permuted_label = permuted_sequence.to(device), permuted_label.to(device)
 
@@ -315,10 +315,10 @@ for epoch in range(epochs):
                 val_f1 += f1
                 val_roc += roc_auc
 
-    val_precision /= 27
-    val_recall /= 27
-    val_f1 /= 27
-    val_roc /= 27
+    val_precision /= 224-190
+    val_recall /= 224-190
+    val_f1 /= 224-190
+    val_roc /= 224-190
 
     record_results(epoch, val_loss, right_num, num1s, num0s, outputs, (val_precision, val_recall, val_f1), val_roc, train=False)
     recent_val_losses.append(val_loss)
@@ -349,7 +349,7 @@ for epoch in range(epochs):
 
     if val_accs[-1] > best_acc:
         best_acc = val_accs[-1]
-        torch.save(model.state_dict(), root_dir + f'model({epoch}_{epochs}-{best_acc:.4f}-{val_precision:.4f}-{val_recall:.4f}-{val_f1:.4f}-{lr}-{weight_decay}-{TheTime}--{Thetarget}).pth')
+        torch.save(model.state_dict(), root_dir + f'Gm-model({epoch}_{epochs}-{best_acc:.4f}-{val_precision:.4f}-{val_recall:.4f}-{val_f1:.4f}-{lr}-{weight_decay}-{TheTime}--{Thetarget}).pth')
 
 
 def plot_metric(train_metric, val_metric, metric_name, y_label, save_path):
