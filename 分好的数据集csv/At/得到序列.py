@@ -13,7 +13,6 @@ nonresponsive_genes = read_genes('/Data4/gly_wkdir/coldgenepredict/raw_sec/S_ita
 # 合并两个字典
 genes = {**cold_responsive_genes, **nonresponsive_genes}
 
-# 步骤2: 解析GFF文件，建立gene_id到位点信息的映射
 def parse_gff(gff_filename):
     gene_to_locus = {}
     with open(gff_filename) as gff_file:
@@ -22,8 +21,14 @@ def parse_gff(gff_filename):
                 continue
             parts = line.strip().split('\t')
             if parts[2] == 'gene':
-                gene_id = parts[-1].split(';')[0].split('=')[1]
-                gene_to_locus[gene_id] = (parts[0], int(parts[3]), int(parts[4]))
+                attributes = parts[-1]
+                gene_id = None
+                for attribute in attributes.split(';'):
+                    if attribute.startswith('gene_id='):
+                        gene_id = attribute.split('=')[1]
+                        break
+                if gene_id:
+                    gene_to_locus[gene_id] = (parts[0], int(parts[3]), int(parts[4]))
     return gene_to_locus
 
 gene_to_locus = parse_gff('/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/分好的数据集csv/At/Arabidopsis_thaliana.TAIR10.59.gff3')
@@ -37,7 +42,7 @@ def extract_sequence(fa_filename, gene_to_locus):
                 sequences[gene_id] = str(record.seq[start-1:end])
     return sequences
 
-sequences = extract_sequence('genome.fa', gene_to_locus)
+sequences = extract_sequence('/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/分好的数据集csv/At/Arabidopsis_thaliana.fa', gene_to_locus)
 
 # 步骤4: 写入新的CSV文件
 with open('/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/分好的数据集csv/At/data.csv', 'w', newline='') as csvfile:

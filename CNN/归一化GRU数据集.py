@@ -59,8 +59,8 @@ def collate_fn(batch):
 # 测试数据加载器和GRU模型
 def main():
     # 参数设置
-    file_path = '/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/分好的数据集csv/sbcolor.csv'  
-    max_len = 46398  # 最大序列长度
+    file_path = '/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/分好的数据集csv/Gm/sorted_data.csv'  
+    max_len = 56556  # 最大序列长度
     vocab_size = 5  # 独热编码的维度 (A, C, G, T, N)
  
     batch_size = 32  # 批次大小
@@ -73,8 +73,8 @@ def main():
     # 把dataloaders里的每个批次的数据存起来
     import pickle
     for i, batch in enumerate(dataloader):
-        i = i + 135
-        with open(f'/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/分好的数据集csv/二进制GRU/排序好/sbicolor/train_batch_{i}.pkl', 'wb') as f:
+        
+        with open(f'/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/分好的数据集csv/二进制GRU/排序好/Gm/data_batch_{i}.pkl', 'wb') as f:
             pickle.dump(batch, f)
 
 
