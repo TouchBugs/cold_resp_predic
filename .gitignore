@@ -21,3 +21,10 @@ venv.bak/
 __pycache__/
 .DS_Store
 *.swp
+
+分好的数据集csv/At/Arabidopsis_thaliana.fa
+分好的数据集csv/At/Arabidopsis_thaliana.TAIR10.59.gff3
+分好的数据集csv/Gm/Gmax_508_v4.0.fa
+分好的数据集csv/Gm/Gmax_508_Wm82.a4.v1.gene.gff3
+分好的数据集csv/Os/Oryza_sativa.IRGSP-1.0.59.chr.gff3
+分好的数据集csv/Os/Oryza_sativa.IRGSP-1.0.dna.toplevel.fa
