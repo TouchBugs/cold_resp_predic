@@ -17,12 +17,11 @@ def preprocess(f):
 
 # 定义物种和数据路径
 species_data_paths = {
-    # '高粱': '/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/分好的数据集csv/二进制GRU/排序好/sbicolor/',
-    # '拟南芥': '/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/分好的数据集csv/二进制GRU/排序好/At/',
-    # '大豆': '/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/分好的数据集csv/二进制GRU/排序好/Gm/',
-    # '水稻': '/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/分好的数据集csv/二进制GRU/排序好/Os/'
-    '小米-train': '/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/分好的数据集csv/二进制GRU/排序好/train/',
-    '小米-val': '/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/分好的数据集csv/二进制GRU/排序好/val/'
+    '高粱': '/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/分好的数据集csv/二进制GRU/排序好/sbicolor/',
+    '拟南芥': '/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/分好的数据集csv/二进制GRU/排序好/At/',
+    '大豆': '/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/分好的数据集csv/二进制GRU/排序好/Gm/',
+    '水稻': '/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/分好的数据集csv/二进制GRU/排序好/Os/',
+    '小米': '/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/分好的数据集csv/二进制GRU/排序好/S_i/',
 }
 # 定义每个物种的数据批次范围
 species_batch_ranges = {
@@ -30,8 +29,7 @@ species_batch_ranges = {
     '拟南芥': (0, 203),
     '大豆': (0, 225),
     '水稻': (0, 228),
-    '小米-train': (0, 135),
-    '小米-val': (0, 27)
+    '小米': (0, 161),
 }
 f1_scores = {}
 roc_data = {}
@@ -41,7 +39,7 @@ print("开始处理数据...")
 for species, data_path in species_data_paths.items():
     print(f"正在处理物种：{species}")
     model = SimpleGRU(hidden_size2=128, hidden_size3=64)
-    model.load_state_dict(torch.load('/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/测试和绘图/model(2_100-0.8047-0.8318-0.7558-0.7877-0.005-0.0001-2024-06-25-10:58:23--1排序128-0.5).pth', map_location='cpu'))
+    model.load_state_dict(torch.load('/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/测试和绘图/Os-model(16_100-0.7092-0.7295-0.8242-0.7701-0.001-1e-05-2024-06-30-22:37:43--0排序128-0.4).pth', map_location='cpu'))
     model.to('cuda:0')
     preds = []
     labels = []
@@ -56,6 +54,8 @@ for species, data_path in species_data_paths.items():
                 a = 'train_batch_'
             elif species == '小米-val':
                 a = 'val_batch_'
+            elif species == '小米':
+                a = 'train_batch_'
             with open(data_path + a + str(i) + '.pkl', 'rb') as f:
                 permuted_sequence, permuted_label = preprocess(f)
                 permuted_sequence, permuted_label = permuted_sequence.to('cuda:0'), permuted_label.to('cpu')
@@ -75,16 +75,16 @@ for species, data_path in species_data_paths.items():
     roc_auc = auc(fpr, tpr)
     roc_data[species] = (fpr, tpr, roc_auc)
 # 把计算出来的ROC曲线和F1精度保存到文件中
-with open('/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/测试和绘图/roc_data小米.pkl', 'wb') as f:
+with open('/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/测试和绘图/roc_dataOs.pkl', 'wb') as f:
     pickle.dump(roc_data, f)
-with open('/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/测试和绘图/f1_scores小米.pkl', 'wb') as f:
+with open('/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/测试和绘图/f1_scoresOs.pkl', 'wb') as f:
     pickle.dump(f1_scores, f)
-exit()
+
 # 读取保存的ROC曲线和F1精度
-# with open('/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/测试和绘图/roc_data.pkl', 'rb') as f:
-#     roc_data = pickle.load(f)
-# with open('/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/测试和绘图/f1_scores.pkl', 'rb') as f:
-#     f1_scores = pickle.load(f)
+with open('/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/测试和绘图/roc_dataOs.pkl', 'rb') as f:
+    roc_data = pickle.load(f)
+with open('/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/测试和绘图/f1_scoresOs.pkl', 'rb') as f:
+    f1_scores = pickle.load(f)
 # with open('/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/测试和绘图/roc_data小米.pkl', 'rb') as f:
 #     roc_data_add = pickle.load(f)
 # with open('/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/测试和绘图/f1_scores小米.pkl', 'rb') as f:
@@ -100,56 +100,56 @@ print("数据处理完成，开始绘制ROC曲线...")
 font_path = '/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/测试和绘图/NotoSansMonoCJKsc-Regular.otf'
 font_prop = FontProperties(fname=font_path)
 
-# # 绘制ROC曲线
-# plt.figure(figsize=(10, 8))
-# for species, (fpr, tpr, roc_auc) in roc_data.items():
-#     plt.plot(fpr, tpr, lw=2, label=f'{species} ROC curve (area = {roc_auc:.2f})')
-# plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
-# plt.xlim([0.0, 1.0])
-# plt.ylim([0.0, 1.05])
-# plt.xlabel('False Positive Rate', fontproperties=font_prop)
-# plt.ylabel('True Positive Rate', fontproperties=font_prop)
-# plt.title('Receiver Operating Characteristic', fontproperties=font_prop)
-# # 只在这里调用plt.legend()，确保所有设置都在一个地方统一
-# plt.legend(loc="lower right", prop=font_prop, fontsize=24)  # 使用prop设置字体属性，同时直接指定fontsize覆盖字体大小
-# plt.savefig('/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/测试和绘图/ROC曲线.png', dpi=300)
-# print("ROC曲线绘制完成，开始绘制F1精度直方图...")
+# 绘制ROC曲线
+plt.figure(figsize=(10, 8))
+for species, (fpr, tpr, roc_auc) in roc_data.items():
+    plt.plot(fpr, tpr, lw=2, label=f'{species} ROC curve (area = {roc_auc:.2f})')
+plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
+plt.xlim([0.0, 1.0])
+plt.ylim([0.0, 1.05])
+plt.xlabel('False Positive Rate', fontproperties=font_prop)
+plt.ylabel('True Positive Rate', fontproperties=font_prop)
+plt.title('Receiver Operating Characteristic', fontproperties=font_prop)
+# 只在这里调用plt.legend()，确保所有设置都在一个地方统一
+plt.legend(loc="lower right", prop=font_prop, fontsize=24)  # 使用prop设置字体属性，同时直接指定fontsize覆盖字体大小
+plt.savefig('/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/测试和绘图/ROC曲线Os.png', dpi=300)
+print("ROC曲线绘制完成，开始绘制F1精度直方图...")
 
-#plt.figure(figsize=(8, 6), dpi=300)
-# species = list(f1_scores.keys())
-# f1_values = list(f1_scores.values())
+plt.figure(figsize=(8, 6), dpi=300)
+species = list(f1_scores.keys())
+f1_values = list(f1_scores.values())
 
-# al = 1
-# # 自定义每个条形的颜色
-# colors = [
-#     (0,194/255,163/255, al),  
-#     (133/255,159/255,205/255, al),  
-#     (255/255,139/255,196/255, al), 
-#     (140/255,216/255,66/255, al), 
-#     (255/255,217/255,0, al), 
-#     (239/255,194/255,146/255, al), 
-#     (0.75, 0.75, 0.75, al),
-#     (0.96, 0.96, 0.96, al) 
-# ]
+al = 1
+# 自定义每个条形的颜色
+colors = [
+    (0,194/255,163/255, al),  
+    (133/255,159/255,205/255, al),  
+    (255/255,139/255,196/255, al), 
+    (140/255,216/255,66/255, al), 
+    (255/255,217/255,0, al), 
+    (239/255,194/255,146/255, al), 
+    (0.75, 0.75, 0.75, al),
+    (0.96, 0.96, 0.96, al) 
+]
 
-# # 确保颜色列表长度与条形数量相等
-# assert len(colors) >= len(species), "颜色列表长度小于条形数量，请添加更多颜色。"
+# 确保颜色列表长度与条形数量相等
+assert len(colors) >= len(species), "颜色列表长度小于条形数量，请添加更多颜色。"
 
-# # 绘制直方图，设置间距为0，进行黑色描边
-# plt.bar(species, f1_values, color=colors[:len(species)], edgecolor='black', width=1.0)  # width=1.0表示条形之间没有间距
+# 绘制直方图，设置间距为0，进行黑色描边
+plt.bar(species, f1_values, color=colors[:len(species)], edgecolor='black', width=1.0)  # width=1.0表示条形之间没有间距
 
-# # 设置标签和标题
-# plt.xlabel('Species', fontproperties=font_prop)
-# plt.ylabel('F1 Score', fontproperties=font_prop)
-# plt.title('F1 Scores by Species', fontproperties=font_prop)
+# 设置标签和标题
+plt.xlabel('Species', fontproperties=font_prop)
+plt.ylabel('F1 Score', fontproperties=font_prop)
+plt.title('F1 Scores by Species', fontproperties=font_prop)
 
-# # 设置x轴标签旋转和字体
-# plt.xticks(rotation=1, fontproperties=font_prop)
+# 设置x轴标签旋转和字体
+plt.xticks(rotation=1, fontproperties=font_prop)
 
-# # 增加网格线
-# plt.grid(axis='y', linestyle='--', alpha=0.7)
+# 增加网格线
+plt.grid(axis='y', linestyle='--', alpha=0.7)
 
-# # 保存图像
-# plt.savefig('/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/测试和绘图/F1精度直方图.png', dpi=300, bbox_inches='tight')
+# 保存图像
+plt.savefig('/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/测试和绘图/F1精度直方图Os.png', dpi=300, bbox_inches='tight')
 
-# print("所有处理和绘图任务完成。")
+print("所有处理和绘图任务完成。")
