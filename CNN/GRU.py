@@ -50,7 +50,7 @@ threathhold = args.threathhold
 Thetarget = f'{freeze_GRU}排序128-{threathhold}'
 print(Thetarget)
 
-best_acc = 0.7
+best_acc = 0.5
 root_dir = '/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/CNN/'
 loss_png = root_dir + f'loss-lr{lr}-wd{weight_decay}-ep{epochs}-{TheTime}-{Thetarget}.png'
 acc_png = root_dir + f'acc-lr{lr}-wd{weight_decay}-ep{epochs}-{TheTime}-{Thetarget}.png'
@@ -58,7 +58,7 @@ precision_png = root_dir + f'precision-lr{lr}-wd{weight_decay}-ep{epochs}-{TheTi
 recall_png = root_dir + f'recall-lr{lr}-wd{weight_decay}-ep{epochs}-{TheTime}-{Thetarget}.png'
 f1_png = root_dir + f'f1-lr{lr}-wd{weight_decay}-ep{epochs}-{TheTime}-{Thetarget}.png'
 roc_png = root_dir + f'roc-lr{lr}-wd{weight_decay}-ep{epochs}-{TheTime}-{Thetarget}.png'
-data_root = '/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/分好的数据集csv/二进制GRU/排序好/Gm/'
+data_root = '/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/分好的数据集csv/二进制GRU/排序好/Os/'
 train_data_dir = data_root
 val_data_dir = data_root
 
@@ -73,7 +73,7 @@ print('模型实例创建完成')
 
 # 只对GRU加载预训练参数
 print('加载预训练参数')
-# model.load_state_dict(torch.load("/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/CNN/model(87_100-0.7218-0.9164-0.9592-0.9322-0.001-1e-05-2024-06-30-19:53:07--0排序128-0.4).pth"))
+model.load_state_dict(torch.load("/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/CNN/model(87_100-0.7218-0.9164-0.9592-0.9322-0.001-1e-05-2024-06-30-19:53:07--0排序128-0.4).pth"))
 
 want_save_gru = 0
 if want_save_gru:
@@ -229,7 +229,7 @@ for epoch in range(epochs):
     train_f1 = 0
     trian_roc = 0
 
-    for i in range(190):
+    for i in range(180):
         with open(train_data_dir + 'data_batch_' + str(i) + '.pkl', 'rb') as f:
             permuted_sequence, permuted_label, num1s, num0s = preprocess(num1s, num0s, f)
             permuted_sequence, permuted_label = permuted_sequence.to(device), permuted_label.to(device)
@@ -263,10 +263,10 @@ for epoch in range(epochs):
             # 把没用的内存释放掉，把不用的变量删除
             #del permuted_sequence, permuted_label, outputs, outputs10, loss, precision, recall, f1, fpr, tpr, roc_auc
 
-    train_precision /= 190
-    train_recall /= 190
-    train_f1 /= 190
-    trian_roc /= 190
+    train_precision /= 180
+    train_recall /= 180
+    train_f1 /= 180
+    trian_roc /= 180
 
     record_results(epoch, epoch_loss, right_num, num1s, num0s, outputs, (train_precision, train_recall, train_f1), trian_roc, train=True)
     recent_train_losses.append(epoch_loss)
@@ -283,7 +283,7 @@ for epoch in range(epochs):
     val_roc = 0
 
     with torch.no_grad():
-        for i in range(190,224):
+        for i in range(180,227):
             with open(val_data_dir + 'data_batch_' + str(i) + '.pkl', 'rb') as f:
                 permuted_sequence, permuted_label, num1s, num0s = preprocess(num1s, num0s, f)
                 permuted_sequence, permuted_label = permuted_sequence.to(device), permuted_label.to(device)
@@ -315,10 +315,10 @@ for epoch in range(epochs):
                 val_f1 += f1
                 val_roc += roc_auc
 
-    val_precision /= 224-190
-    val_recall /= 224-190
-    val_f1 /= 224-190
-    val_roc /= 224-190
+    val_precision /= 227-180
+    val_recall /= 227-180
+    val_f1 /= 227-180
+    val_roc /= 227-180
 
     record_results(epoch, val_loss, right_num, num1s, num0s, outputs, (val_precision, val_recall, val_f1), val_roc, train=False)
     recent_val_losses.append(val_loss)
@@ -349,7 +349,7 @@ for epoch in range(epochs):
 
     if val_accs[-1] > best_acc:
         best_acc = val_accs[-1]
-        torch.save(model.state_dict(), root_dir + f'Gm-model({epoch}_{epochs}-{best_acc:.4f}-{val_precision:.4f}-{val_recall:.4f}-{val_f1:.4f}-{lr}-{weight_decay}-{TheTime}--{Thetarget}).pth')
+        torch.save(model.state_dict(), root_dir + f'Os-model({epoch}_{epochs}-{best_acc:.4f}-{val_precision:.4f}-{val_recall:.4f}-{val_f1:.4f}-{lr}-{weight_decay}-{TheTime}--{Thetarget}).pth')
 
 
 def plot_metric(train_metric, val_metric, metric_name, y_label, save_path):
