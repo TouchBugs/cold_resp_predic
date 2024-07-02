@@ -58,7 +58,7 @@ precision_png = root_dir + f'precision-lr{lr}-wd{weight_decay}-ep{epochs}-{TheTi
 recall_png = root_dir + f'recall-lr{lr}-wd{weight_decay}-ep{epochs}-{TheTime}-{Thetarget}.png'
 f1_png = root_dir + f'f1-lr{lr}-wd{weight_decay}-ep{epochs}-{TheTime}-{Thetarget}.png'
 roc_png = root_dir + f'roc-lr{lr}-wd{weight_decay}-ep{epochs}-{TheTime}-{Thetarget}.png'
-data_root = '/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/分好的数据集csv/二进制GRU/排序好/Os/'
+data_root = '/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/分好的数据集csv/二进制GRU/排序好/sbicolor/'
 train_data_dir = data_root
 val_data_dir = data_root
 
@@ -229,7 +229,7 @@ for epoch in range(epochs):
     train_f1 = 0
     trian_roc = 0
 
-    for i in range(180):
+    for i in range(120):
         with open(train_data_dir + 'data_batch_' + str(i) + '.pkl', 'rb') as f:
             permuted_sequence, permuted_label, num1s, num0s = preprocess(num1s, num0s, f)
             permuted_sequence, permuted_label = permuted_sequence.to(device), permuted_label.to(device)
@@ -263,10 +263,10 @@ for epoch in range(epochs):
             # 把没用的内存释放掉，把不用的变量删除
             #del permuted_sequence, permuted_label, outputs, outputs10, loss, precision, recall, f1, fpr, tpr, roc_auc
 
-    train_precision /= 180
-    train_recall /= 180
-    train_f1 /= 180
-    trian_roc /= 180
+    train_precision /= 120
+    train_recall /= 120
+    train_f1 /= 120
+    trian_roc /= 120
 
     record_results(epoch, epoch_loss, right_num, num1s, num0s, outputs, (train_precision, train_recall, train_f1), trian_roc, train=True)
     recent_train_losses.append(epoch_loss)
@@ -283,7 +283,7 @@ for epoch in range(epochs):
     val_roc = 0
 
     with torch.no_grad():
-        for i in range(180,227):
+        for i in range(120,154):
             with open(val_data_dir + 'data_batch_' + str(i) + '.pkl', 'rb') as f:
                 permuted_sequence, permuted_label, num1s, num0s = preprocess(num1s, num0s, f)
                 permuted_sequence, permuted_label = permuted_sequence.to(device), permuted_label.to(device)
@@ -315,10 +315,10 @@ for epoch in range(epochs):
                 val_f1 += f1
                 val_roc += roc_auc
 
-    val_precision /= 227-180
-    val_recall /= 227-180
-    val_f1 /= 227-180
-    val_roc /= 227-180
+    val_precision /= 154-120
+    val_recall /= 154-120
+    val_f1 /= 154-120
+    val_roc /= 154-120
 
     record_results(epoch, val_loss, right_num, num1s, num0s, outputs, (val_precision, val_recall, val_f1), val_roc, train=False)
     recent_val_losses.append(val_loss)
@@ -349,7 +349,7 @@ for epoch in range(epochs):
 
     if val_accs[-1] > best_acc:
         best_acc = val_accs[-1]
-        torch.save(model.state_dict(), root_dir + f'Os-model({epoch}_{epochs}-{best_acc:.4f}-{val_precision:.4f}-{val_recall:.4f}-{val_f1:.4f}-{lr}-{weight_decay}-{TheTime}--{Thetarget}).pth')
+        torch.save(model.state_dict(), root_dir + f'Sb-model({epoch}_{epochs}-{best_acc:.4f}-{val_precision:.4f}-{val_recall:.4f}-{val_f1:.4f}-{lr}-{weight_decay}-{TheTime}--{Thetarget}).pth')
 
 
 def plot_metric(train_metric, val_metric, metric_name, y_label, save_path):
