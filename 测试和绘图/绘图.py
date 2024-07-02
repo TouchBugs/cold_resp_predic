@@ -39,7 +39,7 @@ print("开始处理数据...")
 for species, data_path in species_data_paths.items():
     print(f"正在处理物种：{species}")
     model = SimpleGRU(hidden_size2=128, hidden_size3=64)
-    model.load_state_dict(torch.load('/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/CNN/Sb-model(2_100-0.7436-0.7683-0.7080-0.7318-0.003-1e-05-2024-07-01-23:53:14--0排序128-0.4).pth', map_location='cpu'))
+    model.load_state_dict(torch.load('/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/测试和绘图/Si_model(2_100-0.8047-0.8318-0.7558-0.7877-0.005-0.0001-2024-06-25-10:58:23--1排序128-0.5).pth', map_location='cpu'))
     model.to('cuda:0')
     preds = []
     labels = []
@@ -75,15 +75,15 @@ for species, data_path in species_data_paths.items():
     roc_auc = auc(fpr, tpr)
     roc_data[species] = (fpr, tpr, roc_auc)
 # 把计算出来的ROC曲线和F1精度保存到文件中
-with open('/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/测试和绘图/roc_dataSb.pkl', 'wb') as f:
+with open('/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/测试和绘图/roc_dataS_I.pkl', 'wb') as f:
     pickle.dump(roc_data, f)
-with open('/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/测试和绘图/f1_scoresSb.pkl', 'wb') as f:
+with open('/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/测试和绘图/f1_scoresS_I.pkl', 'wb') as f:
     pickle.dump(f1_scores, f)
 
 # 读取保存的ROC曲线和F1精度
-with open('/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/测试和绘图/roc_dataSb.pkl', 'rb') as f:
+with open('/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/测试和绘图/roc_dataS_I.pkl', 'rb') as f:
     roc_data = pickle.load(f)
-with open('/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/测试和绘图/f1_scoresSb.pkl', 'rb') as f:
+with open('/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/测试和绘图/f1_scoresS_I.pkl', 'rb') as f:
     f1_scores = pickle.load(f)
 # with open('/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/测试和绘图/roc_data小米.pkl', 'rb') as f:
 #     roc_data_add = pickle.load(f)
@@ -112,7 +112,7 @@ plt.ylabel('True Positive Rate', fontproperties=font_prop)
 plt.title('Receiver Operating Characteristic', fontproperties=font_prop)
 # 只在这里调用plt.legend()，确保所有设置都在一个地方统一
 plt.legend(loc="lower right", prop=font_prop, fontsize=24)  # 使用prop设置字体属性，同时直接指定fontsize覆盖字体大小
-plt.savefig('/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/测试和绘图/ROC曲线Sb.png', dpi=300)
+plt.savefig('/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/测试和绘图/ROC曲线S_I.png', dpi=300)
 print("ROC曲线绘制完成，开始绘制F1精度直方图...")
 
 plt.figure(figsize=(8, 6), dpi=300)
@@ -150,6 +150,6 @@ plt.xticks(rotation=1, fontproperties=font_prop)
 plt.grid(axis='y', linestyle='--', alpha=0.7)
 
 # 保存图像
-plt.savefig('/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/测试和绘图/F1精度直方图Sb.png', dpi=300, bbox_inches='tight')
+plt.savefig('/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/测试和绘图/F1精度直方图S_I.png', dpi=300, bbox_inches='tight')
 
 print("所有处理和绘图任务完成。")
