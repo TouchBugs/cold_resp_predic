@@ -1,1 +1,2 @@
 #hahaha
+这个GRU分支是专门搞GRU的，会删掉master分支里完全没有用的东西，比如之前生成的png，log
