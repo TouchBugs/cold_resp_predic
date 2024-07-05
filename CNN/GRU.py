@@ -281,7 +281,7 @@ for epoch in range(epochs):
     val_recall = 0
     val_f1 = 0
     val_roc = 0
-
+    
     with torch.no_grad():
         for i in range(120,154):
             with open(val_data_dir + 'data_batch_' + str(i) + '.pkl', 'rb') as f:
@@ -324,28 +324,6 @@ for epoch in range(epochs):
     recent_val_losses.append(val_loss)
     recent_val_accs.append(right_num / (num1s + num0s))
     
-    # # 增大和减小学习率的判断
-    # if len(recent_train_losses) > 4 and len(recent_val_losses) > 4 and len(recent_val_accs) > 4:
-    #     recent_train_losses.pop(0)
-    #     recent_val_losses.pop(0)
-    #     recent_val_accs.pop(0)
-
-    
-    #     if (recent_train_losses[-1] > recent_train_losses[0] * (1 - tolerance)) and \
-    #        (recent_val_losses[-1] > recent_val_losses[0] * (1 - tolerance)) and \
-    #        (recent_val_accs[-1] < recent_val_accs[0] * (1 + tolerance) and \
-    #         recent_train_accs[-1] <= 0.85):
-    #         lr *= lr_increase_factor # lr_increase_factor = 1.05
-    #         for param_group in optimizer.param_groups:
-    #             param_group['lr'] = lr
-    #         print(f"{bcolors.UNDERLINE}Learning rate {bcolors.RED}increased{bcolors.UNDERLINE} to {lr:.6f}{bcolors.WHITE}")
-
-    #     # 减小学习率的条件: 每十个周期就减小一次学习率
-    #     if (epoch + 1) % 10 == 0:
-    #         lr *= lr_decrease_factor # lr_decrease_factor = 0.9
-    #         for param_group in optimizer.param_groups:
-    #             param_group['lr'] = lr
-    #         print(f"{bcolors.UNDERLINE}Learning rate {bcolors.GREEN}decreased{bcolors.UNDERLINE} to {lr:.6f}{bcolors.WHITE}")
 
     if val_accs[-1] > best_acc:
         best_acc = val_accs[-1]
