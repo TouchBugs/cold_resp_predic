@@ -7,7 +7,7 @@ from sre_constants import GROUPREF_UNI_IGNORE
 from ipykernel import write_connection_file
 from requests import get
 import yaml
-from .GRU模型 import bcolors, SimpleGRU
+from GRU模型 import bcolors, SimpleGRU
 import torch
 import time
 import matplotlib.pyplot as plt
@@ -58,13 +58,15 @@ precision_png = root_dir + f'长precision-lr{lr}-wd{weight_decay}-ep{epochs}-{Th
 recall_png = root_dir + f'长recall-lr{lr}-wd{weight_decay}-ep{epochs}-{TheTime}-{Thetarget}.png'
 f1_png = root_dir + f'长f1-lr{lr}-wd{weight_decay}-ep{epochs}-{TheTime}-{Thetarget}.png'
 roc_png = root_dir + f'长roc-lr{lr}-wd{weight_decay}-ep{epochs}-{TheTime}-{Thetarget}.png'
-data_root = '/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/分好的数据集csv/二进制GRU/排序好/Zm/'
+data_root = '/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/分好的数据集csv/二进制GRU/排序好/16Zm/'
 train_data_dir = data_root
 val_data_dir = data_root
 
 # device = torch.cuda.set_device(0)
 # 设置GPU
 device = torch.device("cuda:0")
+torch.cuda.empty_cache()
+# torch.autograd.set_detect_anomaly(True)
 # device = torch.device()
 # device = torch.device("cpu")
 print('创建模型实例')
@@ -231,7 +233,7 @@ for epoch in range(epochs):
     trian_roc = 0
 
     a = 0
-    b = 0 + 112
+    b = 0 + 224
     tot = int(b-a)
     for i in range(a, b):
         with open(train_data_dir + 'data_batch_' + str(i) + '.pkl', 'rb') as f:
@@ -286,8 +288,8 @@ for epoch in range(epochs):
     val_f1 = 0
     val_roc = 0
     
-    a = 112
-    b = 140
+    a = 224
+    b = 280
     tot = int(b-a)
     with torch.no_grad():
         for i in range(a, b):

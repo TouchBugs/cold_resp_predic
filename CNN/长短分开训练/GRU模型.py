@@ -1,5 +1,4 @@
 from pandas import isna
-from 原始网络结构bndp5 import bcolors
 import torch
 import torch.nn as nn
 from torch_geometric.nn import GCNConv
@@ -7,8 +6,18 @@ from torch.nn import Linear
 import torch.nn.functional as F
 from torch.nn.utils.rnn import pad_sequence, pack_padded_sequence, pad_packed_sequence
 
-
-bcolors = bcolors
+class bcolors:
+    PURPLR = '\033[95m'
+    BLUE = '\033[94m'
+    GREEN = '\033[92m'
+    YELLOW = '\033[93m'
+    RED = '\033[91m'
+    WHITE = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+    UNDERLINE_Blue = '\033[4;34m'
+    UNDERLINE_Yellow = '\033[4;33m'
+    UNDERLINE_Purple = '\033[4;35m'
 
 class SimpleGRU(nn.Module): # 128->128->64->1
     def __init__(self, input_size=5, hidden_size1=128, hidden_size2=128, hidden_size3=64, hidden_size4=32, output_size=1):

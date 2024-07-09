@@ -7,7 +7,7 @@ from sre_constants import GROUPREF_UNI_IGNORE
 from ipykernel import write_connection_file
 from requests import get
 import yaml
-from .GRU模型 import bcolors, SimpleGRU
+from GRU模型 import bcolors, SimpleGRU
 import torch
 import time
 import matplotlib.pyplot as plt
@@ -58,7 +58,7 @@ precision_png = root_dir + f'短precision-lr{lr}-wd{weight_decay}-ep{epochs}-{Th
 recall_png = root_dir + f'短recall-lr{lr}-wd{weight_decay}-ep{epochs}-{TheTime}-{Thetarget}.png'
 f1_png = root_dir + f'短f1-lr{lr}-wd{weight_decay}-ep{epochs}-{TheTime}-{Thetarget}.png'
 roc_png = root_dir + f'短roc-lr{lr}-wd{weight_decay}-ep{epochs}-{TheTime}-{Thetarget}.png'
-data_root = '/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/分好的数据集csv/二进制GRU/排序好/Zm/'
+data_root = '/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/分好的数据集csv/二进制GRU/排序好/16Zm/'
 train_data_dir = data_root
 val_data_dir = data_root
 
@@ -230,8 +230,8 @@ for epoch in range(epochs):
     train_f1 = 0
     trian_roc = 0
 
-    a = 140
-    b = 140+104
+    a = 280
+    b = 280+208
     tot = int(b-a)
     for i in range(a, b):
         with open(train_data_dir + 'data_batch_' + str(i) + '.pkl', 'rb') as f:
@@ -286,8 +286,8 @@ for epoch in range(epochs):
     val_f1 = 0
     val_roc = 0
     
-    a = 140+104
-    b = 272
+    a = 220+208
+    b = 544
     tot = int(b-a)
     with torch.no_grad():
         for i in range(a, b):

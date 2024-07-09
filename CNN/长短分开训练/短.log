@@ -1,0 +1,15 @@
+nohup: ignoring input
+2024-07-09-23:50:24
+短0排序128-0.4
+创建模型实例
+模型实例创建完成
+加载预训练参数
+预训练参数加载完成
+Traceback (most recent call last):
+  File "/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/CNN/长短分开训练/GRU短.py", line 256, in <module>
+    loss.backward()
+  File "/Data4/gly_wkdir/environment/DeepLpy3.9/lib/python3.9/site-packages/torch/_tensor.py", line 492, in backward
+    torch.autograd.backward(
+  File "/Data4/gly_wkdir/environment/DeepLpy3.9/lib/python3.9/site-packages/torch/autograd/__init__.py", line 251, in backward
+    Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+RuntimeError: cuDNN error: CUDNN_STATUS_INTERNAL_ERROR
