@@ -1,0 +1,3 @@
+nohup: ignoring input
+usage: conda [-h] [-V] command ...
+conda: error: argument command: invalid choice: 'DeepLpy3.9' (choose from 'clean', 'compare', 'config', 'create', 'info', 'init', 'install', 'list', 'package', 'remove', 'rename', 'run', 'search', 'uninstall', 'update', 'upgrade', 'notices')

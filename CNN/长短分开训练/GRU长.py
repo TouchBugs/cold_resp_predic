@@ -228,7 +228,7 @@ for epoch in range(epochs):
     trian_roc = 0
 
     a = 130
-    b = 130 + 224
+    b = 224
     tot = int(b-a)
     for i in range(a, b):
         with open(train_data_dir + 'data_batch_' + str(i) + '.pkl', 'rb') as f:
@@ -284,7 +284,7 @@ for epoch in range(epochs):
     val_roc = 0
     
     a = 224
-    b = 272
+    b = 271
     tot = int(b-a)
     with torch.no_grad():
         for i in range(a, b):
