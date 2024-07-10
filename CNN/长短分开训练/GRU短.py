@@ -54,7 +54,7 @@ precision_png = root_dir + f'短precision-lr{lr}-wd{weight_decay}-ep{epochs}-{Th
 recall_png = root_dir + f'短recall-lr{lr}-wd{weight_decay}-ep{epochs}-{TheTime}-{Thetarget}.png'
 f1_png = root_dir + f'短f1-lr{lr}-wd{weight_decay}-ep{epochs}-{TheTime}-{Thetarget}.png'
 roc_png = root_dir + f'短roc-lr{lr}-wd{weight_decay}-ep{epochs}-{TheTime}-{Thetarget}.png'
-data_root = '/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/分好的数据集csv/二进制GRU/排序好/16Zm/'
+data_root = '/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/分好的数据集csv/二进制GRU/排序好/Zm/'
 train_data_dir = data_root
 val_data_dir = data_root
 
