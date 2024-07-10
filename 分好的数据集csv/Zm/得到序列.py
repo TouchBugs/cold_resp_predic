@@ -52,11 +52,15 @@
 #         if gene_id in sequences:
 #             writer.writerow([gene_id, sequences[gene_id], label])
 # 步骤5：把生成的CSV文件按照sequence的长度从长到短排序
+
 import pandas as pd
 csvfile = pd.read_csv('/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/分好的数据集csv/Zm/data.csv', header=0)
 csvfile['length'] = csvfile['sequence'].apply(len)
-csvfile = csvfile.sort_values(by='length', ascending=False)
+# csvfile = csvfile.sort_values(by='length', ascending=False) # 降序排列
+csvfile = csvfile.sort_values(by='length') # 升序排列 
 csvfile = csvfile.drop(columns='length')
+# 把label列全部转为整数
+csvfile['label'] = csvfile['label'].astype(int)
 csvfile.to_csv('/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/分好的数据集csv/Zm/sorted_data.csv', index=False)
 
 

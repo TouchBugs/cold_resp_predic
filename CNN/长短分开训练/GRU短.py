@@ -1,16 +1,12 @@
-from ast import arg
 import csv
 import pickle
-import re
 import argparse
-from sre_constants import GROUPREF_UNI_IGNORE
-from ipykernel import write_connection_file
-from requests import get
-import yaml
 from GRU模型 import bcolors, SimpleGRU
 import torch
 import time
 import matplotlib.pyplot as plt
+import yagmail
+from sklearn.metrics import roc_curve, auc
 # 创建 ArgumentParser 对象
 parser = argparse.ArgumentParser(description='Process some integers.')
 
@@ -104,9 +100,6 @@ val_recalls = []
 val_f1s = []
 train_rocs = []
 val_rocs = []
-
-from sklearn.metrics import roc_curve, auc
-import numpy as np
 
 def compute_roc(outputs, labels):
     """
@@ -230,8 +223,8 @@ for epoch in range(epochs):
     train_f1 = 0
     trian_roc = 0
 
-    a = 280
-    b = 280+208
+    a = 0
+    b = 100
     tot = int(b-a)
     for i in range(a, b):
         with open(train_data_dir + 'data_batch_' + str(i) + '.pkl', 'rb') as f:
@@ -286,8 +279,8 @@ for epoch in range(epochs):
     val_f1 = 0
     val_roc = 0
     
-    a = 220+208
-    b = 544
+    a = 100
+    b = 130
     tot = int(b-a)
     with torch.no_grad():
         for i in range(a, b):
@@ -373,7 +366,6 @@ with open(root_dir + 'wrong_sequence.csv', 'r') as f:
         print(f'第{row[0]}批第{row[1]}个, {row[2]}')
         mail += f'第{row[0]}批第{row[1]}个, {row[2]}\n'
 
-import yagmail
 # 把超参数都写入邮件
 mail += '\n'
 mail += f'lr: {lr}\nweight_decay: {weight_decay}\nfreeze_GRU: {freeze_GRU}\nthreathhold: {threathhold}\nhidden_size2: {hidden_size2}\nhidden_size3: {hidden_size3}\nepoch: {epochs}\n'

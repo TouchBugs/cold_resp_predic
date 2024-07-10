@@ -1,16 +1,13 @@
-from ast import arg
 import csv
 import pickle
-import re
 import argparse
-from sre_constants import GROUPREF_UNI_IGNORE
-from ipykernel import write_connection_file
-from requests import get
-import yaml
 from GRU模型 import bcolors, SimpleGRU
 import torch
 import time
 import matplotlib.pyplot as plt
+import yagmail
+from sklearn.metrics import roc_curve, auc
+
 # 创建 ArgumentParser 对象
 parser = argparse.ArgumentParser(description='Process some integers.')
 
@@ -58,11 +55,11 @@ precision_png = root_dir + f'长precision-lr{lr}-wd{weight_decay}-ep{epochs}-{Th
 recall_png = root_dir + f'长recall-lr{lr}-wd{weight_decay}-ep{epochs}-{TheTime}-{Thetarget}.png'
 f1_png = root_dir + f'长f1-lr{lr}-wd{weight_decay}-ep{epochs}-{TheTime}-{Thetarget}.png'
 roc_png = root_dir + f'长roc-lr{lr}-wd{weight_decay}-ep{epochs}-{TheTime}-{Thetarget}.png'
-data_root = '/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/分好的数据集csv/二进制GRU/排序好/16Zm/'
+data_root = '/Data4/gly_wkdir/coldgenepredict/raw_sec/S_italica/分好的数据集csv/二进制GRU/排序好/Zm/'
 train_data_dir = data_root
 val_data_dir = data_root
 
-# device = torch.cuda.set_device(0)
+
 # 设置GPU
 device = torch.device("cuda:0")
 torch.cuda.empty_cache()
@@ -107,8 +104,6 @@ val_f1s = []
 train_rocs = []
 val_rocs = []
 
-from sklearn.metrics import roc_curve, auc
-import numpy as np
 
 def compute_roc(outputs, labels):
     """
@@ -232,8 +227,8 @@ for epoch in range(epochs):
     train_f1 = 0
     trian_roc = 0
 
-    a = 0
-    b = 0 + 224
+    a = 130
+    b = 130 + 224
     tot = int(b-a)
     for i in range(a, b):
         with open(train_data_dir + 'data_batch_' + str(i) + '.pkl', 'rb') as f:
@@ -289,7 +284,7 @@ for epoch in range(epochs):
     val_roc = 0
     
     a = 224
-    b = 280
+    b = 272
     tot = int(b-a)
     with torch.no_grad():
         for i in range(a, b):
@@ -375,7 +370,7 @@ with open(root_dir + 'wrong_sequence.csv', 'r') as f:
         print(f'第{row[0]}批第{row[1]}个, {row[2]}')
         mail += f'第{row[0]}批第{row[1]}个, {row[2]}\n'
 
-import yagmail
+
 # 把超参数都写入邮件
 mail += '\n'
 mail += f'lr: {lr}\nweight_decay: {weight_decay}\nfreeze_GRU: {freeze_GRU}\nthreathhold: {threathhold}\nhidden_size2: {hidden_size2}\nhidden_size3: {hidden_size3}\nepoch: {epochs}\n'
