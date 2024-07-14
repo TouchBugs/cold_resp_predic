@@ -15,7 +15,7 @@ def one_hot_encode(sequence, max_len, vocab_size):
         if i >= max_len:
             break
         index = encoding_map.get(base, -1)
-        if index != -1:
+        if index == 0 or index == 1 or index == 2 or index == 3:
             one_hot_encoded[i, index] = 1
 
     return one_hot_encoded

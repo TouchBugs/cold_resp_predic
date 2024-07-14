@@ -37,7 +37,9 @@ class SimpleGRU(nn.Module): # 128->128->64->1
         # output = pad_packed_sequence(packed_output, batch_first=True)
         # print(hidden.size()) # torch.Size([4, 32, 128]) 32批次，4个方向，128个隐藏单元
         # 此处增加注意力机制会使得效果不好
-        hidden_0 = F.adaptive_avg_pool1d(hidden.permute(1, 2, 0), 1).squeeze(2)
+        hidden = hidden.permute(1, 2, 0)
+        hidden = self.BN1(hidden)  # 批量归一化层
+        hidden_0 = F.adaptive_avg_pool1d(hidden, 1).squeeze(2)
 
         hidden = self.fc1(hidden_0)
         hidden = self.BN2(hidden)  # 批量归一化层
