@@ -16,7 +16,7 @@ print(TheTime)
 
 # 添加参数 -lr 、weight_decay、 freeze_GRU、threathhold, hidden_size2, hidden_size3和 -epoch
 # 参数分别指的是学习率、权重衰减、是否冻结GRU层、阈值、隐藏层2的大小、隐藏层3的大小和训练的轮数
-parser.add_argument('-lr', type=float, default=0.003, help='learning rate')
+parser.add_argument('-lr', type=float, default=0.005, help='learning rate')
 parser.add_argument('-weight_decay', type=float, default=1e-5, help='weight decay')
 parser.add_argument('-freeze_GRU', type=int, default=0, help='freeze GRU layer or not')
 parser.add_argument('-threathhold', type=float, default=0.4, help='threathhold')
