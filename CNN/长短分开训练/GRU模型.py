@@ -38,7 +38,15 @@ class SimpleGRU(nn.Module): # 128->128->64->1
         # print(hidden.size()) # torch.Size([4, 32, 128]) 32批次，4个方向，128个隐藏单元
         # 此处增加注意力机制会使得效果不好
 
-        # 
+        # 获取最后一层的正向隐藏状态
+        last_layer_forward_hidden = hidden[2, :, :]
+        # 获取最后一层的反向隐藏状态
+        last_layer_backward_hidden = hidden[3, :, :]
+        # 将这两个隐藏状态合并
+        hidden = torch.cat((last_layer_forward_hidden.unsqueeze(0), last_layer_backward_hidden.unsqueeze(0)), dim=0)
+        # hidden torch.Size([2, 32, 128])
+
+
         hidden = hidden.permute(1, 2, 0)
         hidden = self.BN1(hidden)  # 批量归一化层
         hidden_0 = F.adaptive_avg_pool1d(hidden, 1).squeeze(2)
