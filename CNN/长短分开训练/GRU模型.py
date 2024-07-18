@@ -22,7 +22,7 @@ class bcolors:
 class SimpleGRU(nn.Module): # 128->128->64->1
     def __init__(self, input_size=5, hidden_size1=128, hidden_size2=128, hidden_size3=64, hidden_size4=32, output_size=1):
         super(SimpleGRU, self).__init__()
-        self.gru = nn.GRU(input_size, hidden_size1, batch_first=True, num_layers=2, bidirectional=True)# 双向GRU
+        self.gru = nn.GRU(input_size, hidden_size1, batch_first=True, num_layers=3, bidirectional=True)# 双向GRU
         self.fc1 = nn.Linear(hidden_size1, hidden_size2)
         self.fc2 = nn.Linear(hidden_size2, hidden_size3)
         self.fc3 = nn.Linear(hidden_size3, output_size)
@@ -39,9 +39,9 @@ class SimpleGRU(nn.Module): # 128->128->64->1
         # 此处增加注意力机制会使得效果不好
 
         # 获取最后一层的正向隐藏状态
-        last_layer_forward_hidden = hidden[2, :, :]
+        last_layer_forward_hidden = hidden[-1, :, :]
         # 获取最后一层的反向隐藏状态
-        last_layer_backward_hidden = hidden[3, :, :]
+        last_layer_backward_hidden = hidden[-1, :, :]
         # 将这两个隐藏状态合并
         hidden = torch.cat((last_layer_forward_hidden.unsqueeze(0), last_layer_backward_hidden.unsqueeze(0)), dim=0)
         # hidden torch.Size([2, 32, 128])
