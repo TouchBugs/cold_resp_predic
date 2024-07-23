@@ -22,7 +22,7 @@ class bcolors:
 class SimpleGRU(nn.Module): # 128->128->64->1
     def __init__(self, input_size=5, hidden_size1=128, hidden_size2=128, hidden_size3=64, hidden_size4=32, output_size=1):
         super(SimpleGRU, self).__init__()
-        self.gru = nn.GRU(input_size, hidden_size1, batch_first=True, num_layers=4, bidirectional=True)# 双向GRU
+        self.gru = nn.GRU(input_size, hidden_size1, batch_first=True, num_layers=3, bidirectional = False)# 单向GRU
         self.fc1 = nn.Linear(hidden_size1, hidden_size2)
         self.fc2 = nn.Linear(hidden_size2, hidden_size3)
         self.fc3 = nn.Linear(hidden_size3, output_size)
